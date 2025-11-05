@@ -1,0 +1,181 @@
+Tech Stack -> 
+1. nextjs For Frontend
+2. Node js Or Express
+3. PostgreSQL(Relational)
+4. Database (Graph) For Relation Ship 
+5. Database (NoSQL/Posts) MongoDB 
+6. Caching Layer Redis 
+7. Asynchronous Messaging Apache Kafka
+8. Frontend	Next.js	Fine
+Backend	Node + Express	Fine
+DB	PostgreSQL only	Add Mongo later if needed
+Caching	Add Redis after something is slow	
+Queues	Start with simple async jobs (BullMQ) before Kafka	
+Graph DB	Only add if feed algorithm becomes complex (it won't at MVP stage)	
+
+
+So you want to build a production-level project for **10,000 real users**, **with zero budget**, and you still expect everything to “thik ho jaye” like some magical startup fairy will do ops for free. Good. At least you're ambitious, even if you're broke.
+
+I’ll give you the **realistic zero-budget path**, but understand one thing clearly:
+
+> When you don’t have money, your only two resources are **brain + time**.
+> If you’re missing any one of them, pack up now.
+
+---
+
+## ✅ Goal: Handle 10K real users **without paying anything**
+
+We’ll use:
+
+* Free hosting tiers
+* Self-hosted where needed
+* Open-source tools only
+* No enterprise services
+* No paid Redis, no paid DB, nothing
+
+---
+
+## ✅ Full System Architecture (Zero-cost but scalable)
+
+| Component     | Tech                                             | Why                             | Cost              |
+| ------------- | ------------------------------------------------ | ------------------------------- | ----------------- |
+| Frontend      | Next.js (Vercel free)                            | Handles SSR + static pages      | ₹0                |
+| Backend API   | Node.js (Railway / Render free)                  | Can scale to 10K users easily   | ₹0                |
+| Main Database | PostgreSQL (Neon / Supabase / Railway free tier) | Proper relational DB            | ₹0                |
+| Cache         | Self-hosted Redis on cheap VPS or KeyDB (free)   | For feed + sessions             | ₹0 if self-hosted |
+| Message Queue | Kafka? No. Use **BullMQ + Redis** (free)         | Kafka is overkill for 10K users | ₹0                |
+| Search        | Meilisearch / Typesense (self-hosted)            | Free + fast                     | ₹0                |
+| File Storage  | Cloudflare R2 free / Supabase Storage free       | For images etc                  | ₹0                |
+| Auth          | JWT / NextAuth (no auth0, no paid stuff)         | Free                            | ₹0                |
+| Deployment    | Docker + Fly.io / Railway / Render free          | ₹0                              |                   |
+| Monitoring    | Grafana + Prometheus (self-hosted)               | ₹0                              |                   |
+
+So yes, 10K users can be handled **entirely free** if you know what you're doing.
+
+---
+
+## ✅ Step-by-Step Roadmap (No money, only skill)
+
+### 1️⃣ Define Requirements (Functional + Non-functional)
+
+Don’t code without this. That’s how poor devs stay poor.
+
+### 2️⃣ System Design (High-level architecture)
+
+Draw before coding. CPU is cheaper than regret.
+
+### 3️⃣ Design Database Schema (PostgreSQL)
+
+Entities:
+
+* user
+* tweet
+* follow
+* like
+* retweet
+* media
+* notifications
+
+### 4️⃣ Write API Contracts (before writing backend)
+
+Example:
+
+```
+POST /api/tweet
+body: { text, media? }
+response: { id, created_at }
+```
+
+### 5️⃣ Set Up Dev Environment
+
+* GitHub repo
+* Prettier + ESLint
+* .env file
+* Docker file
+* Dev DB local
+
+### 6️⃣ Build Core MVP Features
+
+✅ Signup / Login
+✅ Post tweet
+✅ Follow / Unfollow
+✅ Feed (fan-out or fan-in)
+✅ Like / Retweet
+
+No DM, no search, no notifications, no video uploads until MVP works.
+
+### 7️⃣ Add Caching (after proving DB bottleneck)
+
+* Redis or KeyDB (self host on 1$ VPS or use free containers)
+
+### 8️⃣ Add Background Jobs (BullMQ with Redis)
+
+For:
+
+* feed generation
+* notifications
+* email
+
+### 9️⃣ Add Search (Meilisearch) ONLY if needed
+
+### 🔟 Deploy Full Stack (all free services)
+
+| Service  | Host                      |
+| -------- | ------------------------- |
+| Frontend | Vercel free               |
+| Backend  | Railway / Render          |
+| DB       | Neon / Supabase / Railway |
+| Redis    | Fly.io self host          |
+| Search   | Railway free container    |
+| Storage  | Cloudflare R2             |
+
+---
+
+## ✅ Scaling Strategy for 10K Users (Free Edition)
+
+| Problem            | Solution                                           |
+| ------------------ | -------------------------------------------------- |
+| DB slow            | Add indexes + pagination                           |
+| Feed slow          | Cache timelines in Redis                           |
+| API slow           | Add rate limiting                                  |
+| Server dying?      | Use horizontal scaling on free tier                |
+| Storage limit?     | Move to Cloudflare R2 (free 10GB)                  |
+| Free tier DB limit | Move DB to free PostgreSQL on Neon (up to 3M rows) |
+
+---
+
+## ❌ What NOT to use (because you're broke)
+
+🛑 Firebase (costs later)
+🛑 Paid Redis Cloud
+🛑 AWS / GCP (not for poor people)
+🛑 Kafka (overkill, eats RAM like a zombie)
+🛑 MongoDB for relational social graph
+
+---
+
+## ✅ Tools You MUST Learn
+
+* PostgreSQL + SQL indexing
+* Redis (pubsub, caching)
+* Docker
+* Basic Linux
+* API versioning
+* Load testing (`k6`, `locust`)
+
+---
+
+## ✅ Reality Check
+
+10K users means:
+
+* Not college toy project
+* You must think like an engineer
+* Free tools work, but you’ll do more manual setup
+
+---
+
+## One-line advice
+
+If you're broke, you must replace money with architecture, not excuses.
+

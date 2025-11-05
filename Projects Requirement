@@ -1,0 +1,261 @@
+                                                                      Tech Stack 
+
+Container -> Docker
+
+Frontend -> React, Next.js, Redux Toolkit , Tailwind Css, 
+
+Backend -> Node.js, express
+
+Database -> Postgres Sql
+
+Database (Graph) For Relation Ship 
+
+Caching Layer Redis 
+
+Socket I.O For Chating
+
+Deployment -> Vercel 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# High-level architecture
+
+Frontend: React + Next.js (SSG/ISR for public pages, SSR for feeds if needed), Redux Toolkit for client state, Tailwind for UI.
+Backend: Node.js + Express (or Next.js API routes for small features) → microservices as you grow.
+Primary DB:PostgreSQL (ACID for posts, users, payments, metadata).
+Graph DB (relationships): Neo4j or Dgraph for follower/interest graphs and fast graph queries (recommendations, mutual followers, shortest path). Use only if you need complex graph algorithms.
+Cache / fast-access layer: Redis (caching, rate-limiting, leaderboards, sorted sets for timelines, notifications).
+Realtime chat / presence: Socket.IO with Redis adapter for multi-instance scaling.
+Media storage: S3-compatible (AWS S3, Backblaze B2, or Google Cloud Storage).
+Search / full-text: Elasticsearch or Meilisearch (for search, hashtag trends).
+Message broker: Kafka or RabbitMQ for event-driven flows (notifications, analytics, feed fan-out).
+Deployment: Vercel for frontend. Host backend as containerized Node services on Render, Fly.io, AWS ECS/Fargate, or GKE. Vercel serverless functions are okay for simple APIs but not for long-lived sockets or high-throughput endpoints.
+Observability: Prometheus + Grafana, OpenTelemetry tracing, ELK or Loki for logs.
+CI/CD: GitHub Actions → run tests, lint, build images, deploy.
+
+# Core features to implement (in priority order)
+
+1. Auth (email, OAuth, JWT + refresh tokens, device sessions).
+2. Profiles (bio, avatar, follow/unfollow).
+3. Posts (text + images + optional video; optimised media uploads).
+4. Feed (home feed + profile feed + explore).
+5. Likes, comments, shares/retweets.
+6. Follow graph and follower suggestions.
+7. Realtime chat (one-to-one + group), online presence.
+8. Notifications (push + in-app).
+9. Search by user/hashtags (autocomplete).
+10. Rate-limits, abuse detection, soft deletes.
+11. Analytics / admin panel to view metrics and moderate content.
+
+Implement clean MVP for interviews: auth, posting, following, feed (deterministic sample), basic chat, and notifications. You can gloss over fancy ML ranking.
+
+# Database schema (Postgres) — core tables (abridged)
+
+Use UUIDs (v4) as PKs. Use proper FKs where needed. Add indexes for read paths.
+
+### users
+
+* id UUID PK
+* username TEXT UNIQUE NOT NULL
+* display_name TEXT
+* email TEXT UNIQUE NOT NULL
+* password_hash TEXT
+* bio TEXT
+* avatar_url TEXT
+* is_verified BOOLEAN DEFAULT false
+* created_at TIMESTAMP, updated_at TIMESTAMP
+
+Indexes: `username`, `email`
+
+### posts
+
+* id UUID PK
+* user_id UUID FK -> users(id)
+* text TEXT (limit as per product)
+* media JSONB (array of objects: {url, type, width, height})
+* reply_to_post_id UUID NULL
+* is_private BOOLEAN
+* visibility ENUM (public/friends/unlisted)
+* created_at TIMESTAMP, updated_at TIMESTAMP
+
+Indexes: `(user_id, created_at)`, full-text index on text (`GIN`)
+
+### post_media (optional for normalization)
+
+* id PK, post_id FK, url, type, meta JSONB
+
+### likes
+
+* id PK
+* user_id, post_id
+* created_at
+
+Unique constraint `(user_id, post_id)`
+
+Indexes: `post_id` (to get counts)
+
+### comments
+
+* id PK, post_id FK, user_id FK, text, parent_comment_id NULLABLE, created_at
+
+### follows (use for relational DB + use graph DB for heavy graph ops)
+
+* follower_id UUID
+* followee_id UUID
+* created_at
+  Primary key `(follower_id, followee_id)`
+
+Indexes: `followee_id` for follower lists
+
+### conversations, messages (chat)
+
+* conversations: id PK, is_group, metadata JSONB, created_at
+* conversation_members: conversation_id, user_id, joined_at, last_read_at
+* messages: id PK, conversation_id FK, sender_id, text, media, created_at
+
+### notifications
+
+* id PK, user_id, actor_id, type ENUM, entity_id (post/comment), payload JSONB, is_read BOOLEAN, created_at
+
+### hashtags
+
+* id, tag TEXT UNIQUE, usage_count INT (de-normalized), last_used_at
+
+### post_hashtags
+
+* post_id, hashtag_id
+
+### media_storage / uploads
+
+* id PK, user_id, url, mime, size, width, height, uploaded_at, status
+
+### audit / soft delete
+
+* Add `deleted_at` TIMESTAMP nullable to posts/comments/users for soft deletes.
+
+# Graph DB usage
+
+Use Neo4j when:
+
+* You need shortest paths, mutual follower queries, community detection, or multi-hop recommendations.
+* Example queries: "friends of friends", "mutual follows", "influencer reach".
+
+Otherwise you can keep `follows` in Postgres and run periodic batch jobs to compute recommendation features.
+
+# Feed design: fan-out-on-write vs fan-out-on-read
+
+* **Fan-out-on-write:** push updates to followers’ timelines on write. Great for fast reads (home feed fetch is O(1)), but heavy writes for users with millions of followers (celeb accounts).
+* **Fan-out-on-read:** compute feed at read time by merging latest posts from followees (and ranking). Simpler storage, heavier read CPU especially as follower counts climb.
+
+**Realistic hybrid approach (what big players do):**
+
+* For regular users, fan-out-on-read.
+* For high-follower accounts, maintain a cached push-based timeline and mix into reads.
+* Maintain a per-user timeline cache in Redis (sorted set) for hot users.
+
+# Redis usage patterns
+
+* **Caching:** user sessions, post preview caching, profile caches, computed timelines.
+* **Sorted sets (ZSET):** per-user timeline ordering (score = created_at or ranking score).
+* **Pub/Sub or Streams:** for real-time notifications and Socket.IO message delivery between instances.
+* **Rate limiting:** token bucket per user/IP.
+* **Leaderboards / trending:** counter + TTL keys.
+* **Locking:** distributed locks for critical sections.
+
+# Socket.IO scaling
+
+* Use the Redis adapter (`@socket.io/redis-adapter`) so multiple Node instances can broadcast events.
+* Deploy behind a load balancer that supports sticky sessions (or use WebSocket upgrades with affinity) OR use the Redis adapter so stickiness is less required.
+* If you need massive scale, move to a message broker like NATS or use managed realtime (Pusher, Ably) for lower operational overhead.
+
+# Media pipeline
+
+* Client uploads to presigned S3 URL (secure, avoids server bandwidth).
+* Use background workers to generate thumbnails, transcode videos, extract metadata (FFmpeg), and update DB.
+* Use CDN in front of S3 for fast global delivery.
+* Store metadata (dimensions, duration, perceptual hash) in DB for dedupe.
+
+# Search & trends
+
+* Push posts and user metadata to Elasticsearch (or Meilisearch) for fast search and autocomplete.
+* Maintain hashtag usage counters in Redis and batch-write to the DB for durability.
+
+# Security & privacy
+
+* Hash passwords with Argon2id or bcrypt (Argon2 preferred).
+* Use HTTPS everywhere, secure cookies, CSRF protection for forms.
+* Rate-limit write endpoints, sign media uploads.
+* Implement content moderation: profanity filters, ML models or 3rd-party moderation APIs, reporting flow.
+* GDPR/CCPA: implement user data export and deletion.
+
+# Scalability & infra notes
+
+* Use read replicas for Postgres; PgBouncer for connection pooling.
+* Partition large tables (posts, messages) by date or user_id if they grow huge.
+* Use Kafka for durable event streaming (notifications, analytics).
+* Autoscale workers and stateless backend; keep stateful components (DB, Redis) on managed services if possible.
+* Warm caches for trending content.
+
+# Observability & SLOs
+
+* Track latency (P95, P99), error rates, throughput, DB CPU/IO, Redis hit ratio.
+* SLO example: feed response P95 < 200ms, error rate < 0.1%.
+* Instrument with OpenTelemetry and central trace logs.
+
+# Testing & quality
+
+* Unit tests, integration tests, contract tests for services (use Pact).
+* E2E tests for critical user flows (login, post, follow).
+* Load testing (k6, Locust) for endpoints that power feeds and ingestion.
+
+# What to show in a portfolio / interview (the things that actually impress)
+
+1. Clean repository with README, architecture diagram, and setup instructions.
+2. A working demo with:
+
+   * Sign up / login
+   * Create post (image + text)
+   * Follow/unfollow
+   * Home feed (deterministic, fast)
+   * Simple real-time chat + notifications
+3. A short design doc (2–3 pages) covering:
+
+   * Data model, feed design choice, scalability plan, tradeoffs (with numbers).
+4. Metrics: show simulated load testing results and how system behaves as load grows.
+5. CI/CD pipeline + tests + linting.
+6. One page on security choices and where you’d invest engineering time next.
+7. If possible, add a small ML-based ranking or recommendation proof-of-concept (even naive collaborative filtering).
+
+# Common tradeoffs to be ready to defend in interviews
+
+* Fan-out-on-read vs fan-out-on-write (show hybrid plan).
+* Relational DB vs pure Graph DB for relationships (cost vs capability).
+* Serverless vs containers for backend (cold starts, long sockets).
+* How you’ll handle celebrity fan-out and abuse.
+
+# Quick checklist — what to implement for a Google SDE-style demo
+
+* ✅ Auth + secure sessions
+* ✅ Post CRUD + media upload via presigned URLs
+* ✅ Follow graph + follow/unfollow API
+* ✅ Home feed (explain algorithm)
+* ✅ Likes + comments + notifications (real-time)
+* ✅ Realtime chat with Socket.IO (scaled via Redis adapter)
+* ✅ Background worker for media processing (BullMQ or similar)
+* ✅ Tests, Dockerfile, infra notes, CI pipeline, load test results, and a 2-page architecture doc
+
+You asked for a stack and guidance — you’ve got the bones, the muscles, and the battle plan. Build the MVP, measure, and iterate. Do not waste time on micro-optimizations before traffic exists.
+
+Final blunt advice you asked for: **Ship a working feed and a short architecture doc — if the feed loads fast and your reasoning shows tradeoffs, you’ll beat 80% of candidates.**
+
