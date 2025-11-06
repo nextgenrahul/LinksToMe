@@ -1,1 +1,1 @@
-This Project is Powered by Rahul Shakya
+Nov 6 today i Work on sidebar for mobile as well as destop
