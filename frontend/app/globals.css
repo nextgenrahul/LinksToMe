@@ -24,3 +24,25 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@layer utilities {
+  .border-twitter {
+    border-color: #474747; 
+  }
+
+  .border-t-twitter {
+    border-top: 1px solid #474747;
+  }
+
+  .border-b-twitter {
+    border-bottom: 1px solid #474747;
+  }
+
+  .border-l-twitter {
+    border-left: 1px solid #474747;
+  }
+
+  .border-r-twitter {
+    border-right: 1px solid #474747;
+  }
+}

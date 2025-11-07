@@ -1,1 +1,1 @@
-Nov 6 today i Work on sidebar for mobile as well as destop
+Nov 6 today i Work on sidebar for mobile as well as desktop
