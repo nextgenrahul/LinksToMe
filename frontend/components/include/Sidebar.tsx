@@ -132,7 +132,7 @@ export default function SidebarLayout() {
   
   return (
     <>
-      <aside className="hidden md:flex fixed inset-y-0 left-40 z-50 flex-col bg-black text-white w-64 border-r-twitter">
+      <aside className="hidden md:flex inset-y-0 left-40 z-50 flex-col text-white w-64">  
         <div className="flex items-center justify-center h-16">
           <div className="keyboard">
             <span className="key">L</span>
