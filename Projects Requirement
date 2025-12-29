@@ -2,14 +2,14 @@
 
 Container -> Docker
 
-Frontend -> React, Next.js, Redux Toolkit , Tailwind Css, 
+Frontend -> React, Next.js , Tailwind Css, 
 
-Backend -> Node.js, express
+Backend -> Node.js
 
 Database -> Postgres Sql
 
 Database (Graph) For Relation Ship 
-
+NoSQL Key-Value / Document Store: Content & Scaling
 Caching Layer Redis 
 
 Socket I.O For Chating
