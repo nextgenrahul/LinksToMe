@@ -1,0 +1,1 @@
+Validation: Defines the rules for data (e.g., "A post must be at least 1 character long").

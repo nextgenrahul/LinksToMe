@@ -1,0 +1,1 @@
+Layout: These define the skeleton of your app. For a social media site, this handles the persistent Sidebar and Navigation Bar that stay visible while the main content changes.

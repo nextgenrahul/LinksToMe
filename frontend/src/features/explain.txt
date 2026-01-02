@@ -1,0 +1,9 @@
+features/ (The Core Engine)
+This is where 80% of your application lives. Instead of putting all "Components" in one folder, you group them by domain.
+
+Why: If your "Feed" logic breaks, you know exactly which folder to look in. It isolates complexity.
+
+Billionaire Mindset: This is modular leverage. It allows you to scale the product by adding new features without breaking existing ones.
+
+
+Section : 

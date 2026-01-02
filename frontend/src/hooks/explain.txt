@@ -1,0 +1,1 @@
+Hooks: Handle the logic of the UI (e.g., usePosts which calls a service to get data).

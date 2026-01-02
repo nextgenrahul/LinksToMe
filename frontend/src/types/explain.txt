@@ -1,0 +1,1 @@
+Types: Defines the shape of your data (e.g., what a User object looks like).    
