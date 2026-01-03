@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+:root {
+  /* Default Light Theme Variables */
+  --background: #60A5FA;
+  --text: #000000;
+  --accent: #1d9bf0; /* Social Media Blue */
+}
+
+[data-theme='dark'] {
+  /* Dark Theme Variables */
+  --background: #000000;
+  --text: #ffffff;
+  --accent: #1d9bf0;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+  margin: 0;
+  transition: background-color 0.3s ease; /* Smooth transition */
+}

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import "../../assets/sidebarImg/sidebar.css";
+import "../../assets/css/sidebar.css";
 import { navigation } from "../../constants/navigation";
 import { Link, useLocation } from "react-router-dom";
 
@@ -56,6 +56,7 @@ export default function SidebarLayout() {
                 alt={item.name}
                 width={30}
                 height={30}
+              className="text-gray-700 dark:text-gray-300"
               />
               <span>{item.name}</span>
             </Link>
