@@ -8,4 +8,4 @@ export const PATHS = {
   LOGIN: '/login',
   BOOKMARKS: '/bookmarks',
   PROFILE: '/profile',
-};
+} as const;

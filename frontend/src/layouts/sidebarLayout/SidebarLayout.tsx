@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../../assets/css/sidebar.css";
-import { navigation } from "../../constants/navigation";
+import { navigation } from "../constants/sidebar.constants";
 import { Link, useLocation } from "react-router-dom";
 
 export default function SidebarLayout() {

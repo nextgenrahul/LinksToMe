@@ -1,10 +1,10 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { PATHS } from "./paths";
+import { PATHS } from "../constants/paths";
 import { lazy, Suspense } from "react";
 import MainLayout from "../layouts/MainLayout";
 import Fallback from "../components/Loading/Fallback";
 
-const Home = lazy(() => import("../features/feed/pages/HomePage"));
+const Home = lazy(() => import("../features/reels/pages/HomePage"));
 const Login = lazy(() => import("../features/auth/pages/Login"));
 export const router = createBrowserRouter([
   {

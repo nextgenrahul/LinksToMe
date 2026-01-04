@@ -1,4 +1,4 @@
-import { sidebarIcons } from "../assets/sidebarImg";
+import { sidebarIcons } from "../../assets/sidebarImg";
 
 export interface NavItem {
   name: string;

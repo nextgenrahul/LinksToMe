@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
-import SidebarLayout from './SidebarLayout/SidebarLayout'; // Your sidebar code
-import RightPanel from './RightLayout/RightPanel';
+import SidebarLayout from './sidebarLayout/SidebarLayout'; // Your sidebar code
+import RightPanel from './rightLayout/RightPanel';
 
 export default function MainLayout() {
   return (

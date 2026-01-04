@@ -6,4 +6,12 @@ Why: If your "Feed" logic breaks, you know exactly which folder to look in. It i
 Billionaire Mindset: This is modular leverage. It allows you to scale the product by adding new features without breaking existing ones.
 
 
-Section : 
+ src/features/[feature-name]/
+├── api/            # Data Fetching (Axios calls specific to this feature)
+├── components/     # UI Parts (Buttons, Cards, Modals used ONLY here)
+├── hooks/          # Logic (useLikeButton.ts, useFetchPosts.ts)
+├── pages/          # Full Screens (The entry points for the router)
+├── store/          # State (Redux slices or local feature state)
+├── types/          # TypeScript definitions (Interfaces for the data)
+├── utils/          # Helpers (Formatting dates or strings for this feature)
+└── index.ts        # THE PUBLIC API (The only file other features can talk to)
