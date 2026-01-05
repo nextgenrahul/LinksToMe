@@ -6,6 +6,7 @@ export const PATHS = {
   QUERY: '/query',
   GLOBAL: '/global',
   LOGIN: '/login',
+  SIGNUP: "/accounts/emailsignup",
   BOOKMARKS: '/bookmarks',
   PROFILE: '/profile',
 } as const;

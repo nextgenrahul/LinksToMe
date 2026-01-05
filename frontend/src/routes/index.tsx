@@ -1,49 +1,40 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { PATHS } from "../constants/paths";
-import { lazy, Suspense } from "react";
-import MainLayout from "../layouts/MainLayout";
-import Fallback from "../components/Loading/Fallback";
+import { PATHS } from "@/constants/paths";
+import MainLayout from "@/layouts/MainLayout";
+// import { ProtectedRoute } from "./ProtectedRoute";
+import { authRoutes } from "@/features/auth/route";
 
-const Home = lazy(() => import("../features/reels/pages/HomePage"));
-const Login = lazy(() => import("../features/auth/pages/Login"));
+// Example of how you will add future features
+// import { feedRoutes } from "@/features/feed/routes";
+
 export const router = createBrowserRouter([
+  // 1. PUBLIC ROUTES (Login, Signup, Landing)
+  ...authRoutes,
+
+  // 2. PROTECTED ROUTES (Requires Authentication)
   {
     path: "/",
-    element: (
-      <Suspense fallback={<Fallback />}>
-        <MainLayout />
-      </Suspense>
-    ),
+    element: <div>Protect</div>, // Higher-order component for security
+    // element: <ProtectedRoute />, // Higher-order component for security
     errorElement: <div>404 - Page Not Found.</div>,
     children: [
       {
-        index: true,
-        element: <Navigate to={PATHS.HOME} />,
-      },
-      {
-        path: PATHS.HOME,
-        element: <Home />,
-      },
-      {
-        path: PATHS.SEARCH,
-        element: <div>Search Page</div>,
-      },
-      {
-        path: PATHS.NOTIFICATIONS,
-        element: <div>Notifications Page</div>,
-      },
-      {
-        path: PATHS.PROFILE,
-        element: <div>Profile Page</div>,
+        element: <MainLayout />, // The Sidebar/Navbar wrapper
+        children: [
+          {
+            index: true,
+            element: <Navigate to={PATHS.HOME} replace />,
+          },
+          {
+            path: PATHS.HOME,
+            element: <div>Home Page Content</div>,
+            // ...feedRoutes (spread other feature routes here)
+          },
+        ],
       },
     ],
   },
-  {
-    path: PATHS.LOGIN,
-    element: (
-      <Suspense fallback={<Fallback />}>
-        <Login />
-      </Suspense>
-    ),
-  },
+  
+  // 3. CATCH ALL
+  { path: "*", element: <Navigate to="/" replace /> }
 ]);
