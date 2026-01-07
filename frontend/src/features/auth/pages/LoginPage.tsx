@@ -1,63 +1,71 @@
-import { useState } from "react";
+// src/features/auth/pages/LoginPage.tsx
+// import { Link } from "react-router-dom";
+// import { useLogin } from "../hooks/useLogin";
+// import { useSelector } from "react-redux";
+// import { type RootState } from "@/store";
+import "@/assets/css/logo.css";
+export default function LoginPage() {
+  // const { email, password, setEmail, setPassword, handleSubmit } = useLogin();
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    console.log({ email, password });
-  }
-
+  // const isLoading = useSelector((state: RootState) => state.auth.isLoading);
+  
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
-      <div className="w-full max-w-sm rounded-xl bg-zinc-900 p-8 shadow-lg">
-        <h2 className="mb-6 text-center text-2xl font-bold text-gray-200">
-          Login
-        </h2>
+    <div className="min-h-screen bg-black flex flex-col">
+      {/* Main content */}
+      <main className="h-[calc(100vh-4rem)]">
+        <section className="w-full h-full flex flex-col lg:flex-row">
+          {/* LEFT SIDE (Desktop only: Logo + Image) */}
+          <aside className="hidden lg:flex lg:w-1/1 flex-col bg-[#0C1014]">
+            {/* Logo (DESKTOP ONLY) */}
+            <header className="px-6 py-10">
+              <div className="flex items-center h-16">
+                <div className="keyboard">
+                  <span className="key">L</span>
+                  <span className="key">i</span>
+                  <span className="key">n</span>
+                  <span className="key">k</span>
+                  <span className="key">s</span>
+                  <span className="key">To</span>
+                  <span className="key">M</span>
+                  <span className="key">e</span>
+                </div>
+              </div>
+            </header>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full rounded-md bg-zinc-800 px-3 py-2 text-gray-200 outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="you@example.com"
-            />
-          </div>
+            {/* Image */}
+            <div className="flex-1 flex items-center justify-center">Image</div>
+          </aside>
 
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full rounded-md bg-zinc-800 px-3 py-2 text-gray-200 outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="••••••••"
-            />
-          </div>
+          {/* RIGHT SIDE (Form section – FULL HEIGHT) */}
+          <section className="w-full lg:w-7/13 h-full flex flex-col bg-[#152127]">
+            {/* Logo (MOBILE ONLY – TOP, NOT CENTER) */}
+            <header className="p-6 lg:hidden bg-[#0C1014]">
+              <div className="flex items-center h-16">
+                <div className="keyboard">
+                  <span className="key">L</span>
+                  <span className="key">i</span>
+                  <span className="key">n</span>
+                  <span className="key">k</span>
+                  <span className="key">s</span>
+                  <span className="key">To</span>
+                  <span className="key">M</span>
+                  <span className="key">e</span>
+                </div>
+              </div>
+            </header>
 
-          <button
-            type="submit"
-            className="w-full rounded-md bg-blue-600 py-2 font-semibold text-gray-100 hover:bg-blue-500 transition"
-          >
-            Sign In
-          </button>
-        </form>
+            {/* Login Form (takes remaining height) */}
+            <div className="flex-1 p-6 flex items-center justify-center lg:border-l-2 lg:border-gray-600 ">
+              Login Form
+            </div>
+          </section>
+        </section>
+      </main>
 
-        <p className="mt-4 text-center text-sm text-gray-400">
-          Don’t have an account?{" "}
-          <a href="/signup" className="text-blue-400 hover:underline">
-            Sign up
-          </a>
-        </p>
-      </div>
+      {/* Footer */}
+      <footer className="h-18 flex items-center justify-center text-center bg-[#0C1014] lg:border-t lg:border-gray-600">
+        Footer content goes here
+      </footer>
     </div>
   );
 }
