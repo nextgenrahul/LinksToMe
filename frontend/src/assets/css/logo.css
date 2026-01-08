@@ -1,6 +1,6 @@
 .keyboard {
-    position: relative;
-    left: 0;
+  position: relative;
+  left: 0;
   /* width: 100vw; */
   /* margin-left: 1rem; */
 }
@@ -11,13 +11,12 @@
   font-weight: 800;
   letter-spacing: -0.1vw;
   transition: transform 0.2s;
-  color: white;
+  /* color: black; */
 }
 
-.bold-text{
-    font-weight: 900;
+.bold-text {
+  font-weight: 900;
 }
-
 
 @keyframes pressDown1 {
   30%,
