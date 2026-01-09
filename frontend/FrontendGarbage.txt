@@ -10,8 +10,6 @@ import mainLoginImage from "@/assets/mainLoginImage.jpg";
 import { useNavigate } from "react-router-dom";
 import Button from "@/components/ui/Button";
 import EyeToggle from "@/components/ui/EyeToggle";
-import Input from "@/components/ui/Input";
-import LinksToMe from "@/components/ui/LinksToMe";
 
 export default function LoginPage() {
   // const { email, password, setEmail, setPassword, handleSubmit } = useLogin();
@@ -25,8 +23,23 @@ export default function LoginPage() {
       {/* Main content */}
       <main className="flex flex-col flex-1 overflow-y-auto lg:overflow-hidden">
         <section className="flex-1 flex flex-col lg:flex-row">
+          {/* LEFT SIDE (Desktop only: Logo + Image) */}
           <aside className="hidden lg:flex lg:w-1/1 flex-col bg-white">
-            <LinksToMe />
+            {/* Logo (DESKTOP ONLY) */}
+            <header className="px-6 py-10">
+              <div className="flex items-center h-16">
+                <div className="keyboard">
+                  <span className="key">L</span>
+                  <span className="key">i</span>
+                  <span className="key">n</span>
+                  <span className="key">k</span>
+                  <span className="key">s</span>
+                  <span className="key">To</span>
+                  <span className="key">M</span>
+                  <span className="key">e</span>
+                </div>
+              </div>
+            </header>
 
             {/* Image */}
             <div className="flex-1 flex items-center justify-center p-6">
@@ -50,9 +63,26 @@ export default function LoginPage() {
 
           {/* RIGHT SIDE (Form section – FULL HEIGHT) */}
           <section className="w-full lg:w-7/13  flex flex-col bg-white">
-            <LinksToMe className="p-6 lg:hidden flex justify-center text-white bg-black" showBg={true} />
+            {/* Logo (MOBILE ONLY – TOP, NOT CENTER) */}
+            <header className="p-6 lg:hidden flex justify-center text-white bg-black">
+              <div className="flex items-center h-16">
+                <div className="keyboard">
+                  <span className="key">L</span>
+                  <span className="key">i</span>
+                  <span className="key">n</span>
+                  <span className="key">k</span>
+                  <span className="key">s</span>
+                  <span className="key">To</span>
+                  <span className="key">M</span>
+                  <span className="key">e</span>
+                </div>
+              </div>
+            </header>
+
+            {/* Login Form (takes remaining height) */}
             <div className="p-6 flex items-center h-full justify-center lg:border-l-2 lg:border-gray-500">
               <div className="w-full max-w-sm sm:max-w-md flex flex-col gap-6">
+                {/* Heading */}
                 <div className="text-center lg:text-left">
                   <h1 className="text-2xl sm:text-3xl font-bold text-black">
                     Welcome back
@@ -61,12 +91,43 @@ export default function LoginPage() {
                     Login to your account
                   </p>
                 </div>
-                <Input type="email" placeholder="Email address" />
+
+                <input
+                  type="email"
+                  placeholder="Email address"
+                  className="
+                    w-full
+                    p-4 sm:p-5
+                    text-base sm:text-[18px]
+                    font-semibold
+                    text-black
+                    border-[1.5px] border-gray-500
+                    rounded-lg
+                    shadow-[2.5px_3px_0_#000]
+                    outline-none
+                    transition-shadow duration-250 ease-in-out
+                    focus:shadow-[5.5px_7px_0_#000]
+                  "
+                />
 
                 <div className="relative">
-                  <Input
+                  <input
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
+                    className="
+                      w-full
+                      p-4 sm:p-5
+                      pr-12
+                      text-base sm:text-[18px]
+                      font-semibold
+                      text-black
+                      border-[1.5px] border-gray-500
+                      rounded-lg
+                      shadow-[2.5px_3px_0_#000]
+                      outline-none
+                      transition-shadow duration-250 ease-in-out
+                      focus:shadow-[5.5px_7px_0_#000]
+                    "
                   />
                   <EyeToggle
                     icon={
@@ -76,6 +137,22 @@ export default function LoginPage() {
                     onClick={() => setShowPassword((prev) => !prev)}
                     className="absolute right-4 top-1/2 -translate-y-1/2"
                   />
+                  {/* <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2"
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    <img
+                      src={
+                        showPassword ? InputImage.eyeOpen : InputImage.eyeClose
+                      }
+                      alt=""
+                      className="w-5 h-5 sm:w-6 sm:h-6"
+                    />
+                  </button> */}
                 </div>
 
                 <Button variant="primary">Login</Button>
