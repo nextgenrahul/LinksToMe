@@ -12,7 +12,6 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  // --- Date of Birth State ---
   const [dob, setDob] = useState({
     day: "",
     month: "",
