@@ -4,6 +4,9 @@ CREATE TABLE "users" (
   "email" citext UNIQUE,
   "phone" varchar(20) UNIQUE,
   "password_hash" text NOT NULL,
+  "birthYear"   Int,
+  "birthMonth"  Int,
+  "birthDay"    Int,
   "display_name" varchar(100),
   "bio" text,
   "profile_image_url" text,
@@ -12,6 +15,8 @@ CREATE TABLE "users" (
   "status" varchar(20) DEFAULT 'active',
   "created_at" timestamp DEFAULT (now()),
   "updated_at" timestamp DEFAULT (now())
+  @@index([username])
+  @@index([identifier])
 );
 
 CREATE TABLE "user_links" (
