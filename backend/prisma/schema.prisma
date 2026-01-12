@@ -6,8 +6,9 @@
 // prisma/schema.prisma
 
 generator client {
-  provider = "prisma-client" // Note: In v7, 'prisma-client' is the new default
+  provider        = "prisma-client" // Note: In v7, 'prisma-client' is the new default
   previewFeatures = ["postgresqlExtensions"] // Required for citext
+  output          = "../src/generated/prisma"
 }
 
 datasource db {
@@ -16,22 +17,22 @@ datasource db {
 }
 
 model User {
-  id               BigInt   @id @default(autoincrement())
-  username         String   @unique @db.VarChar(30)
-  email            String?  @unique @db.Citext
-  phone            String?  @unique @db.VarChar(20)
-  passwordHash     String   @map("password_hash")
-  birthYear        Int?
-  birthMonth       Int?
-  birthDay         Int?
-  displayName      String?  @map("display_name") @db.VarChar(100)
-  bio              String?
-  profileImageUrl  String?  @map("profile_image_url")
-  coverImageUrl    String?  @map("cover_image_url")
-  isPrivate        Boolean  @default(false) @map("is_private")
-  status           String   @default("active") @db.VarChar(20)
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  id              BigInt   @id @default(autoincrement())
+  username        String   @unique @db.VarChar(30)
+  email           String?  @unique @db.Citext
+  phone           String?  @unique @db.VarChar(20)
+  passwordHash    String   @map("password_hash")
+  birthYear       Int?
+  birthMonth      Int?
+  birthDay        Int?
+  displayName     String?  @map("display_name") @db.VarChar(100)
+  bio             String?
+  profileImageUrl String?  @map("profile_image_url")
+  coverImageUrl   String?  @map("cover_image_url")
+  isPrivate       Boolean  @default(false) @map("is_private")
+  status          String   @default("active") @db.VarChar(20)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   @@index([username])
   @@map("users")
