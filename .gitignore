@@ -1,0 +1,17 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Docker
+.docker/
+postgres_data/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
