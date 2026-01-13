@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../../assets/css/sidebar.css";
 import { navigation } from "../constants/sidebar.constants";
 import { Link, useLocation } from "react-router-dom";
@@ -10,8 +10,8 @@ export default function SidebarLayout() {
   const isActive = (path: string) => pathname === path;
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
-
-  const toggleMore = () => setIsMoreOpen((prev) => !prev);
+  console.log(isMoreOpen);
+  // const toggleMore = () => setIsMoreOpen((prev) => !prev);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -56,7 +56,7 @@ export default function SidebarLayout() {
                 alt={item.name}
                 width={30}
                 height={30}
-              className="text-gray-700 dark:text-gray-300"
+                className="text-gray-700 dark:text-gray-300"
               />
               <span>{item.name}</span>
             </Link>

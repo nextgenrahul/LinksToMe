@@ -1,1 +1,0 @@
-Components: These are "dumb" or atomic elements used everywhere (e.g., a standard PrimaryButton).
