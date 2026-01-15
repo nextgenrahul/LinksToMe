@@ -13,6 +13,7 @@ generator client {
 
 datasource db {
   provider   = "postgresql"
+  url        = env("DATABASE_URL")
   extensions = [citext] // Enables the citext extension for case-insensitive emails
 }
 

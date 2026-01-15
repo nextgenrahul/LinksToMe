@@ -7,6 +7,7 @@ import Button from "@/components/ui/Button";
 import EyeToggle from "@/components/ui/EyeToggle";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
+import { PATHS } from "@/constants/paths";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -49,7 +50,7 @@ export default function SignupPage() {
     <div className="h-screen bg-white flex flex-col overflow-hidden">
      <header className="absolute top-0 left-0 w-full z-50 p-6 flex items-center pointer-events-none">
         <button
-          onClick={() => navigate("/login")}
+          onClick={() => navigate(PATHS.LOGIN)}
           className="flex items-center gap-2 text-gray-500 hover:text-black transition-colors group pointer-events-auto"
         >
           <img

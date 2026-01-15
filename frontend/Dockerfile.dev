@@ -1,9 +1,29 @@
+# Stage 1: Development Environment
 FROM node:22-alpine
 
+# Set working directory to the root of the monorepo
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
 
+# 1. Copy workspace configurations (The "Contract")
+# This ensures NPM knows how to link the 'shared' folder to the 'frontend'
+COPY package*.json ./
+COPY shared/package*.json ./shared/
+COPY frontend/package*.json ./frontend/
+
+# 2. Install all dependencies
+# In a monorepo, this installs everything in one optimized tree at the root
+RUN npm install
+
+# 3. Copy the actual source code
+COPY shared/ ./shared/
+COPY frontend/ ./frontend/
+
+# 4. Navigate to the frontend directory
+WORKDIR /app/frontend
+
+# 5. Expose the Vite dev port
 EXPOSE 5173
+
+# 6. Run Vite with the --host flag
+# This allows the container to be accessed from your browser at localhost:5173
 CMD ["npm", "run", "dev", "--", "--host"]

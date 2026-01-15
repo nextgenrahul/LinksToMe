@@ -33,29 +33,43 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
 
-  # 3. Backend (STABLE DEV)
+  # 3. Backend (Monorepo Optimized ✅)
   backend:
     build:
-      context: ./backend
+      context: . # REQUIRED: Root context to see /shared
+      dockerfile: ./backend/Dockerfile    
     container_name: linkstome_backend
     restart: always
+    command: npm run dev --workspace=backend
     environment:
       DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-mypassword}@db:5432/${DB_NAME:-linkstome}?schema=public
     ports:
       - "5000:5000"
+    volumes:
+      # Syncing the entire workspace for monorepo integrity
+      - .:/app 
+      # Anonymize node_modules to use the ones installed INSIDE the container
+      - /app/node_modules
+      - /app/backend/node_modules
+      - /app/shared/node_modules
     depends_on:
       db:
         condition: service_healthy
 
-  # 4. Frontend (STABLE DEV)
+  # 4. Frontend (Monorepo Optimized ✅)
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
+      context: . # REQUIRED: Root context to see /shared
+      dockerfile: ./frontend/Dockerfile.dev
     container_name: linkstome_frontend
     restart: always
+    command: npm run dev --workspace=frontend -- --host
     ports:
       - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/frontend/node_modules
     depends_on:
       - backend
 

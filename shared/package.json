@@ -1,0 +1,19 @@
+{
+  "name": "@linkstome/shared",
+  "version": "1.0.0",
+  "description": "Shared Package",
+  "type": "module",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./schemas": "./dist/schemas/index.js"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "zod": "^4.3.5"
+  }
+}

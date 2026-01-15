@@ -1,17 +1,13 @@
-// src/features/auth/pages/LoginPage.tsx
-// import { Link } from "react-router-dom";
-// import { useLogin } from "../hooks/useLogin";
-// import { useSelector } from "react-redux";
-// import { type RootState } from "@/store";
 import "@/assets/css/logo.css";
 import { useState } from "react";
 import { InputImage } from "@/assets/input";
 import mainLoginImage from "@/assets/mainLoginImage.jpg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Button from "@/components/ui/Button";
 import EyeToggle from "@/components/ui/EyeToggle";
 import Input from "@/components/ui/Input";
 import LinksToMe from "@/components/ui/LinksToMe";
+import { PATHS } from "@/constants/paths";
 
 export default function LoginPage() {
   // const { email, password, setEmail, setPassword, handleSubmit } = useLogin();
@@ -22,17 +18,16 @@ export default function LoginPage() {
 
   return (
     <div className="h-screen bg-white flex flex-col overflow-hidden">
-      {/* Main content */}
       <main className="flex flex-col flex-1 overflow-y-auto lg:overflow-hidden">
         <section className="flex-1 flex flex-col lg:flex-row">
           <aside className="hidden lg:flex lg:w-1/1 flex-col bg-white">
             <LinksToMe />
 
-            {/* Image */}
             <div className="flex-1 flex items-center justify-center p-6">
               <img
                 src={mainLoginImage}
                 alt="Login Image"
+                loading="lazy"
                 className="
                 w-full
                 max-w-xs  
@@ -42,15 +37,17 @@ export default function LoginPage() {
                 xl:max-w-xl
                 h-auto
                 object-contain
-              
+                no-select
               "
               />
             </div>
           </aside>
 
-          {/* RIGHT SIDE (Form section – FULL HEIGHT) */}
           <section className="w-full lg:w-7/13  flex flex-col bg-white">
-            <LinksToMe className="p-6 lg:hidden flex justify-center text-white bg-black" showBg={true} />
+            <LinksToMe
+              className="p-6 lg:hidden flex justify-center text-white bg-black"
+              showBg={true}
+            />
             <div className="p-6 flex items-center h-full justify-center lg:border-l-2 lg:border-gray-500">
               <div className="w-full max-w-sm sm:max-w-md flex flex-col gap-6">
                 <div className="text-center lg:text-left">
@@ -78,6 +75,14 @@ export default function LoginPage() {
                   />
                 </div>
 
+                <div className="flex justify-end">
+                  <Link
+                    to={PATHS.FORGOTPASSWORD}
+                    className="text-sm text-black hover:underline font-semibold"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
                 <Button variant="primary">Login</Button>
                 <Button variant="secondary">
                   <img
@@ -90,7 +95,7 @@ export default function LoginPage() {
 
                 <Button
                   variant="primaryShort"
-                  onClick={() => navigate("/accounts/emailsignup")}
+                  onClick={() => navigate(PATHS.SIGNUP)}
                 >
                   Create Account
                 </Button>
@@ -98,7 +103,6 @@ export default function LoginPage() {
             </div>
           </section>
         </section>
-        {/* Footer */}
         <footer className="h-18 flex items-center justify-center text-center bg-black text-white lg:border-t lg:border-gray-500">
           Our Terms And Conditions
         </footer>

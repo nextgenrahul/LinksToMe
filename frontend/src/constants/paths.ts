@@ -7,6 +7,7 @@ export const PATHS = {
   GLOBAL: '/global',
   LOGIN: '/login',
   SIGNUP: "/accounts/emailsignup",
+  FORGOTPASSWORD: "/accounts/password/reset",
   BOOKMARKS: '/bookmarks',
   PROFILE: '/profile',
 } as const;

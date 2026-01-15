@@ -14,3 +14,8 @@
   --accent: #1d9bf0;
 }
   
+.no-select {
+  user-select: none;
+  -webkit-user-drag: none; 
+  -webkit-touch-callout: none;
+}

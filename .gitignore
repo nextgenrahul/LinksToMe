@@ -1,17 +1,58 @@
-# Secrets
-.env
-.env.local
-.env.*.local
-
-# Docker
-.docker/
-postgres_data/
-
-# OS files
+# ==========================================
+# 1. System-Level Noise (OS specific)
+# ==========================================
 .DS_Store
 Thumbs.db
-
-# IDEs
-.vscode/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 .idea/
+.vscode/
 *.swp
+*.bak
+
+# ==========================================
+# 2. Dependency Management (The "Decapitation" Rule)
+# ==========================================
+node_modules/
+dist/
+build/
+.npm
+.cache
+
+# ==========================================
+# 3. Environment Secrets (CRITICAL SECURITY)
+# ==========================================
+.env
+.env.*
+!.env.example
+secrets.json
+*.pem
+*.key
+
+# ==========================================
+# 4. Workspace Specific Artifacts
+# ==========================================
+# Backend/Prisma
+backend/prisma/migrations/
+backend/dist/
+shared/dist/
+# shared/node_modules
+# Frontend/Vite
+frontend/dist/
+frontend/.vite/
+frontend/node_modules/
+backend/node_modules/
+
+# ==========================================
+# 5. Docker Artifacts
+# ==========================================
+.docker-build-cache/
+dump.rdb
+
+# ==========================================
+# 6. Documentation & Testing
+# ==========================================
+coverage/
+.nyc_output/
