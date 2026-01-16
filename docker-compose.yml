@@ -42,6 +42,11 @@ services:
     restart: always
     command: npm run dev --workspace=backend
     environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-mypassword}
+      DB_NAME: ${DB_NAME:-linkstome}
       DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-mypassword}@db:5432/${DB_NAME:-linkstome}?schema=public
     ports:
       - "5000:5000"

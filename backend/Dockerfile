@@ -18,12 +18,7 @@ RUN npm install
 COPY shared/ ./shared/
 COPY backend/ ./backend/
 
-# 4. Generate Prisma Client
-# You must point to the specific schema location using the --schema flag
-# because your WORKDIR is /app, not /app/backend
-RUN DATABASE_URL="postgresql://postgres:admin@7685@postgres:5432/linkstome" \
-    npx prisma generate --schema=./backend/prisma/schema.prisma
-# 5. Expose the API Port
+
 WORKDIR /app/backend
 EXPOSE 5000
 
