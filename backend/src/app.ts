@@ -2,58 +2,83 @@ import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
-
+import moduleLoader from "./shared/loaders/moduleLoader";
+import dbService from "./config/database"; // Using your Raw SQL Pool service
 
 export class App {
     public app: Application;
     private port: number | string;
+
     constructor(port: number | string) {
         this.app = express();
         this.port = port;
-        this.routes();
-
-
+        
+        // Configuration Flow
         this.initializeMiddlewares();
         this.initializeHealthCheck();
-        // this.initializeRoutes(); // Future: inject routes here
     }
 
-    private routes() {
-        // ✅ HELLO WORLD CHECK
-        this.app.get('/', (_req, res) => {
-            res.status(200).json({
-                success: true,
-                message: 'Hello World 🚀 Linkstome backend is running'
-            });
-        });
-    }
     /**
- * Private method to encapsulate middleware setup
- */
+     * Initializes Global Middlewares
+     * Focus: Security, Performance, and Parsing
+     */
     private initializeMiddlewares(): void {
-        this.app.use(helmet());
-        this.app.use(cors());
-        this.app.use(compression());
-        this.app.use(express.json());
+        this.app.use(helmet()); // High-level security headers
+        this.app.use(cors());   // Cross-Origin Resource Sharing
+        this.app.use(compression()); // Gzip compression for faster responses
+        this.app.use(express.json()); // Body parsing
         this.app.use(express.urlencoded({ extended: true }));
     }
 
     /**
-     * Setup internal health monitoring
+     * Standard Health Monitoring
      */
     private initializeHealthCheck(): void {
         this.app.get('/health', (req: Request, res: Response) => {
-            res.status(200).json({ status: 'UP', timestamp: new Date() });
+            res.status(200).json({ 
+                status: 'UP', 
+                timestamp: new Date(),
+                uptime: process.uptime() 
+            });
+        });
+
+        this.app.get('/', (req: Request, res: Response) => {
+            res.status(200).json({
+                success: true,
+                message: '🚀 LinksToMe Backend Engine is Live'
+            });
         });
     }
 
     /**
-     * Public method to allow the server to start
+     * Asynchronous Bootstrap Process
+     * Connects DB and loads dynamic modules before the server starts
+     */
+    public async bootstrap(): Promise<void> {
+        try {
+            // 1. Connect to PostgreSQL (Raw SQL Pool)
+            await dbService.init(); 
+            console.log('✅ Database connected successfully');
+
+            // 2. Load Dynamic Modules from src/modules
+            await moduleLoader.loadModules();
+            
+            // 3. Register Routes automatically
+            await moduleLoader.registerRoutes(this.app);
+            console.log('📦 All modules registered');
+
+        } catch (error) {
+            console.error('❌ Critical failure during bootstrap:', error);
+            process.exit(1);
+        }
+    }
+
+    /**
+     * Public method to ignite the engine
      */
     public listen(): void {
         this.app.listen(this.port, () => {
-            console.log(`🚀 LinksToMe Engine running on port ${this.port}`);
+            console.log(`📡 [PRODUCTION] LinksToMe Engine running on port ${this.port}`);
         });
     }
-
 }

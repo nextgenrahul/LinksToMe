@@ -18,6 +18,11 @@ export const SignupPayloadSchema = z.object({
   birthday: BirthdaySchema,
 });
 
+// Sign In Payload
+
+
+
+
 // Infer Types for use in Frontend and Backend
 export type SignupPayload = z.infer<typeof SignupPayloadSchema>;
 export type Birthday = z.infer<typeof BirthdaySchema>;

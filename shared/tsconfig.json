@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@shared": ["shared/src/index.ts"]
+      "@shared": ["shared/schemas/index.ts"]
     }
   }
 }
