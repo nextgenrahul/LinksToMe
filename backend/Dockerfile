@@ -20,7 +20,7 @@ COPY backend/ ./backend/
 
 
 WORKDIR /app/backend
-EXPOSE 5000
+EXPOSE 4000
 
 # 6. Execute from the root
 CMD ["npm", "run", "dev", "--workspace=backend"]
