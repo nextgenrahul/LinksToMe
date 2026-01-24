@@ -45,7 +45,6 @@ class ModuleLoader {
             // Standard: Every module must have an index.ts that exports its routes/controller/service
             const modulePath = path.join(this.config.modulesPath, moduleName, "index.ts");
             const moduleImport = await import(`file://${modulePath}`);
-            
             this.modules.set(moduleName, moduleImport.default);
             this.logger.log(`📦 Module loaded: [${moduleName}]`);
           } catch (err: any) {

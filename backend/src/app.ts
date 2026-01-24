@@ -50,7 +50,7 @@ export class App {
         });
     }
 
-    /**
+    /** 
      * Asynchronous Bootstrap Process
      * Connects DB and loads dynamic modules before the server starts
      */

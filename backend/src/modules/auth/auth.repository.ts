@@ -2,6 +2,7 @@ import dbService from '../../config/database';
 import { SignupPayload } from '@linkstome/shared';
 
 export class AuthRepository {
+  
   public async createUser(data: SignupPayload, passwordHash: string, id: string) {
     const query = `
       INSERT INTO users (
