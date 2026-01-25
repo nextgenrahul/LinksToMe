@@ -46,6 +46,11 @@ export default function SignupPage() {
     }));
   }, [dob.month, dob.year]);
 
+  
+
+
+
+
   return (
     <div className="h-screen bg-white flex flex-col overflow-hidden">
      <header className="absolute top-0 left-0 w-full z-50 p-6 flex items-center pointer-events-none">

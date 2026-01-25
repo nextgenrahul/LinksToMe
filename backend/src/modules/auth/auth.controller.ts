@@ -20,6 +20,18 @@ export class AuthController {
       });
     }
   }
+
+  public async login(){
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
+
+
+
+
 }
 
 export default new AuthController();

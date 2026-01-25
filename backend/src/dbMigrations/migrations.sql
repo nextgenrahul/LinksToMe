@@ -46,3 +46,29 @@ CREATE TABLE users (
 -- 8. Essential Indexes for Billionaire-Grade Speed
 CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_users_email ON users(email);
+
+
+
+
+
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+CREATE TABLE refresh_tokens (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- this function is linked to pgcrypto extension
+    user_id VARCHAR(255) NOT NULL,
+    token_hash TEXT NOT NULL,
+    user_agent TEXT,
+    ip_address INET,
+    expires_at TIMESTAMPTZ NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+
+    CONSTRAINT fk_refresh_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
+CREATE INDEX idx_refresh_tokens_user_id
+ON refresh_tokens(user_id);
+CREATE UNIQUE INDEX idx_refresh_tokens_token_hash
+ON refresh_tokens(token_hash);

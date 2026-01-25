@@ -4,6 +4,9 @@ import helmet from 'helmet';
 import compression from 'compression';
 import moduleLoader from "./shared/loaders/moduleLoader";
 import dbService from "./config/database"; // Using your Raw SQL Pool service
+import { globalErrorHandler } from './shared/middlewares/error.middleware';
+import { AppError } from './shared/utils/AppError';
+
 
 export class App {
     public app: Application;
@@ -66,6 +69,19 @@ export class App {
             // 3. Register Routes automatically
             await moduleLoader.registerRoutes(this.app);
             console.log('📦 All modules registered');
+
+            // 4. Handle unknown routes (404)
+            this.app.all('*', (req, res, next) => {
+                next(
+                    new AppError(
+                        `Sorry, the page ${req.originalUrl} could not be found.`,
+                        404
+                    )
+                );
+            });
+
+            // 5. Global Error Middleware 
+            this.app.use(globalErrorHandler);
 
         } catch (error) {
             console.error('❌ Critical failure during bootstrap:', error);

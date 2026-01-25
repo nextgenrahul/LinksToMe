@@ -4,6 +4,7 @@ import MainLayout from "@/layouts/MainLayout";
 // import { ProtectedRoute } from "./ProtectedRoute";
 import { authRoutes } from "@/features/auth";
 import ProtectedRoute from "./ProtectedRoute";
+import NotFound from "@/features/common/NotFound";
 
 // Example of how you will add future features
 // import { feedRoutes } from "@/features/feed/routes";
@@ -31,11 +32,15 @@ export const router = createBrowserRouter([
             element: <div>Home Page Content</div>,
             // ...feedRoutes (spread other feature routes here)
           },
+          {
+            path: "*",
+            element: <NotFound />,
+          }
         ],
       },
     ],
   },
   
   // 3. CATCH ALL
-  { path: "*", element: <Navigate to="/" replace /> }
+  // { path: "*", element: <Navigate to="/" replace /> }
 ]);

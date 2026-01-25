@@ -1,0 +1,19 @@
+Error flow :  
+
+HTTP Request
+   ↓
+Route
+   ↓
+catchAsync wrapper
+   ↓
+Controller logic
+   ↓
+Error thrown?
+   ↓
+catchAsync catches it
+   ↓
+next(error)
+   ↓
+Global Error Middleware
+   ↓
+Clean API response

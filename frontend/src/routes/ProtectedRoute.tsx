@@ -7,7 +7,6 @@ export default function ProtectedRoute() {
     (state: RootState) => state.auth.isAuthenticated
   );
 
-  console.log(isAuthenticated)
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }

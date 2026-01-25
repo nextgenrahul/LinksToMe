@@ -17,8 +17,7 @@ const Input: React.FC<InputProps> = ({
         p-4 sm:p-5
         pr-12
         text-base sm:text-[18px]
-        font-semibold
-        text-black
+        font-semibold        text-black
         border-[1.5px] border-gray-500
         rounded-lg
         shadow-[2.5px_3px_0_#000]
