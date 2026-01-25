@@ -32,15 +32,12 @@ export const router = createBrowserRouter([
             element: <div>Home Page Content</div>,
             // ...feedRoutes (spread other feature routes here)
           },
-          {
-            path: "*",
-            element: <NotFound />,
-          }
+          
         ],
       },
     ],
   },
   
   // 3. CATCH ALL
-  // { path: "*", element: <Navigate to="/" replace /> }
+  { path: "*", element: <NotFound /> }
 ]);

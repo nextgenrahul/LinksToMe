@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -15,7 +15,7 @@ export class App {
     constructor(port: number | string) {
         this.app = express();
         this.port = port;
-        
+
         // Configuration Flow
         this.initializeMiddlewares();
         this.initializeHealthCheck();
@@ -38,10 +38,10 @@ export class App {
      */
     private initializeHealthCheck(): void {
         this.app.get('/health', (req: Request, res: Response) => {
-            res.status(200).json({ 
-                status: 'UP', 
+            res.status(200).json({
+                status: 'UP',
                 timestamp: new Date(),
-                uptime: process.uptime() 
+                uptime: process.uptime()
             });
         });
 
@@ -60,21 +60,21 @@ export class App {
     public async bootstrap(): Promise<void> {
         try {
             // 1. Connect to PostgreSQL (Raw SQL Pool)
-            await dbService.init(); 
+            await dbService.init();
             console.log('✅ Database connected successfully');
 
             // 2. Load Dynamic Modules from src/modules
             await moduleLoader.loadModules();
-            
+
             // 3. Register Routes automatically
             await moduleLoader.registerRoutes(this.app);
             console.log('📦 All modules registered');
 
             // 4. Handle unknown routes (404)
-            this.app.all('*', (req, res, next) => {
+            this.app.use((req, res, next) => {
                 next(
                     new AppError(
-                        `Sorry, the page ${req.originalUrl} could not be found.`,
+                        `Cannot find ${req.originalUrl} on this server`,
                         404
                     )
                 );
