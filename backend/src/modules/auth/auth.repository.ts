@@ -22,7 +22,6 @@ export class AuthRepository {
 
 
 
-
   public async createUser(data: SignupPayload, passwordHash: string, id: string) {
     const query = `
       INSERT INTO users (
@@ -30,7 +29,7 @@ export class AuthRepository {
         birth_day, birth_month, birth_year
       ) 
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      RETURNING id, username, email, created_at;
+      RETURNING id, username, email, account_status, created_at;
     `;
 
     const values = [

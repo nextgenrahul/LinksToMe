@@ -14,8 +14,7 @@ export class AuthController {
       ip: req.ip,
     };
 
-    const { user, accessToken, refreshToken } =
-      await this.service.signup(payload, meta);
+    const { user, accessToken, refreshToken } = await this.service.signup(payload, meta);
 
     // // Refresh token 
     res.cookie(
@@ -31,6 +30,7 @@ export class AuthController {
       accessToken,
     });
   });
+
 
   public async login() {
     try {

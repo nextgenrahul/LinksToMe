@@ -40,7 +40,7 @@ export class App {
         this.app.get('/health', (req: Request, res: Response) => {
             res.status(200).json({
                 status: 'UP',
-                timestamp: new Date(),
+                timestamp: new Date(), 
                 uptime: process.uptime()
             });
         });

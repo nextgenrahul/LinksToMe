@@ -9,7 +9,7 @@ export class AuthService {
 	private repo = authRepository;
 
 	public async signup(payload: SignupPayload, meta: { userAgent?: string; ip?: string }) {
-		const exists = await this.repo.exists(payload.email, payload.password);
+		const exists = await this.repo.exists(payload.email, payload.username);
 		if (exists) {
 			throw new AppError("Email or username already exists", 409);
 		}
