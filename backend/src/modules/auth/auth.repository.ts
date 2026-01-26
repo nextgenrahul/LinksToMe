@@ -47,15 +47,62 @@ export class AuthRepository {
     return rows[0];
   }
 
-  public async exists(identifier: string, username: string) {
+  public async exists(email: string) {
     const query = `SELECT id
     FROM users
-    WHERE (email = $1 OR username = $2)
+    WHERE (email = $1)
       AND account_status = 'active'
     LIMIT 1;`;
-    const { rows } = await dbService.query(query, [identifier, username]);
+    const { rows } = await dbService.query(query, [email]);
     return rows.length > 0;
   }
+
+  public async findByIdentifier(identifier: string) {
+    const query = `
+      SELECT
+        id,
+        email,
+        username,
+        password,
+        account_status
+      FROM users
+      WHERE (email = $1 OR username = $1)
+      LIMIT 1;
+    `;
+
+    const { rows } = await dbService.query(query, [identifier]);
+    return rows[0] ?? null;
+  }
+
+  public async deleteRefreshToken(tokenHash: string): Promise<boolean> {
+    const query = `
+      DELETE FROM refresh_tokens WHERE token_hash = $1;
+    `;
+
+    const result = await dbService.query(query, [tokenHash]);
+
+    return (result.rowCount ?? 0) > 0;
+  }
+
+
+
+  public async findRefreshToken(tokenHash: string) {
+    const query = `
+      SELECT
+        rt.user_id,
+        rt.expires_at,
+        u.account_status
+      FROM refresh_tokens rt
+      JOIN users u ON u.id = rt.user_id
+      WHERE rt.token_hash = $1
+      LIMIT 1;
+    `;
+
+    const { rows } = await dbService.query(query, [tokenHash]);
+    return rows[0] ?? null;
+  }
+
+
 }
 
 export default new AuthRepository();

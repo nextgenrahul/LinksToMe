@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import authService from './auth.services';
 import { catchAsync } from 'backend/src/shared/utils/catchAsync';
 import { refreshTokenCookieOptions } from 'backend/src/config/cookies';
+import { AppError } from 'backend/src/shared/utils/AppError';
 
 export class AuthController {
   private service = authService;
@@ -16,7 +17,7 @@ export class AuthController {
 
     const { user, accessToken, refreshToken } = await this.service.signup(payload, meta);
 
-    // // Refresh token 
+    // Refresh token 
     res.cookie(
       process.env.REFRESH_TOKEN_COOKIE_NAME!,
       refreshToken,
@@ -31,16 +32,58 @@ export class AuthController {
     });
   });
 
+  public login = catchAsync(async (req: Request, res: Response) => {
+    const { user, accessToken, refreshToken } = await this.service.login(req.body, {
+      userAgent: req.headers["user-agent"],
+      ip: req.ip,
+    });
 
-  public async login() {
-    try {
-      console.log("login")
-    } catch (error) {
-      console.log(error)
+    res.cookie(
+      process.env.REFRESH_TOKEN_COOKIE_NAME!,
+      refreshToken,
+      refreshTokenCookieOptions()
+    );
+    return res.status(200).json({
+      success: true,
+      user,
+      accessToken,
+    });
+  });
+
+  public generateRefreshToken = catchAsync(async (req: Request, res: Response) => {
+    const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME!;
+    const refreshToken = req.cookies?.[cookieName];
+    if (!refreshToken) {
+      throw new AppError("Unauthorized: Token not found", 401);
     }
-  }
+    const { accessToken } = await this.service.refresh(refreshToken);
 
+    return res.status(200).json({
+      success: true,
+      accessToken,
+    });
+  });
 
+  public logout = catchAsync(async (req: Request, res: Response) => {
+    const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME!;
+    const refreshToken = req.cookies?.[cookieName];
+
+    console.log(cookieName)
+    console.log("Refresh token:", refreshToken);
+
+    if (refreshToken) {
+      await this.service.logout(refreshToken);
+    }
+
+    res.clearCookie(cookieName, {
+      path: process.env.REFRESH_TOKEN_COOKIE_PATH,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  });
 
 
 }

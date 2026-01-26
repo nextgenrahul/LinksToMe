@@ -31,11 +31,21 @@ class AuthRoutes {
                 path: '/signup',
                 handler: this.controller.register.bind(this.controller),
             },
-            // {
-            //     method: 'post',
-            //     path: '/login',
-            //     handler: this.controller..bind(this.controller),
-            // },
+            {
+                method: 'post',
+                path: '/login',
+                handler: this.controller.login.bind(this.controller),
+            },
+            {
+                method: 'post',
+                path: '/refresh',
+                handler: this.controller.generateRefreshToken.bind(this.controller),
+            },
+            {
+                method: 'post',
+                path: '/logout',
+                handler: this.controller.logout.bind(this.controller),
+            }
         ];
         routes.forEach((route) => {
             const handlers: RequestHandler[] = [];

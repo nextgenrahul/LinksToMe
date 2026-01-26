@@ -6,6 +6,8 @@ import moduleLoader from "./shared/loaders/moduleLoader";
 import dbService from "./config/database"; // Using your Raw SQL Pool service
 import { globalErrorHandler } from './shared/middlewares/error.middleware';
 import { AppError } from './shared/utils/AppError';
+import cookieParser from 'cookie-parser';
+
 
 
 export class App {
@@ -26,11 +28,15 @@ export class App {
      * Focus: Security, Performance, and Parsing
      */
     private initializeMiddlewares(): void {
+        this.app.use(cors({
+            credentials: true
+        })); 
         this.app.use(helmet()); // High-level security headers
-        this.app.use(cors());   // Cross-Origin Resource Sharing
-        this.app.use(compression()); // Gzip compression for faster responses
-        this.app.use(express.json()); // Body parsing
+        this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
+        this.app.use(cookieParser());
+        this.app.use(compression());
+        
     }
 
     /**
@@ -40,7 +46,7 @@ export class App {
         this.app.get('/health', (req: Request, res: Response) => {
             res.status(200).json({
                 status: 'UP',
-                timestamp: new Date(), 
+                timestamp: new Date(),
                 uptime: process.uptime()
             });
         });

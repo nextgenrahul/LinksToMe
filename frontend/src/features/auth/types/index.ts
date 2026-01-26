@@ -40,3 +40,17 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
 }
+
+
+// Signup Type 
+export type SignupForm = {
+  fullName: string;
+  email: string;
+  username: string;
+  password: string;
+  dob: {
+    day: string;
+    month: string;
+    year: string;
+  };
+};
