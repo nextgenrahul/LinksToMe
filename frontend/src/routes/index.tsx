@@ -17,7 +17,6 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <ProtectedRoute />, // Higher-order component for security
-    // element: <ProtectedRoute />, // Higher-order component for security
     errorElement: <div>404 - Page Not Found.</div>,
     children: [
       {

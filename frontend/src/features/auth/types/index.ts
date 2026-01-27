@@ -1,3 +1,4 @@
+
 // // Standardized for all API communication
 export interface Birthday {
   year: number;   
@@ -54,3 +55,8 @@ export type SignupForm = {
     year: string;
   };
 };
+
+export type SigninForm = {
+  email: string;
+  password: string;
+}

@@ -3,7 +3,7 @@ import crypto from "crypto";
 import authRepository from './auth.repository';
 import { SigninPayload, SignupPayload } from '@linkstome/shared';
 import { AppError } from 'backend/src/shared/utils/AppError';
-import { generateAccessToken, generateRefreshToken, hashToken } from './auth.tokens';
+import { generateAccessToken, generateRefreshToken, hashToken } from '../../shared/utils/auth.tokens';
 
 export class AuthService {
 	private repo = authRepository;

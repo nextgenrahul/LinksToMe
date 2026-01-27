@@ -8,13 +8,82 @@ import EyeToggle from "@/components/ui/EyeToggle";
 import Input from "@/components/ui/Input";
 import LinksToMe from "@/components/ui/LinksToMe";
 import { PATHS } from "@/constants/paths";
+import type { SigninForm } from "../types";
+import { SigninPayloadSchema } from "@linkstome/shared";
+import { validateSchema } from "@/shared/utils/validation";
+import apiClient from "@/services/apiClient";
+import { useDispatch } from "react-redux";
+import { setAuth } from "../store/authSlice";
 
 export default function LoginPage() {
-  // const { email, password, setEmail, setPassword, handleSubmit } = useLogin();
-
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  // const isLoading = useSelector((state: RootState) => state.auth.isLoading);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [form, setForm] = useState<SigninForm>({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (!name) return;
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleLogin = async () => {
+    if (isLoading) return;
+
+    try {
+      const dataToValidate = {
+        email: form.email,
+        password: form.password,
+      };
+
+      const { isValid, errors: validationErrors } = validateSchema(
+        SigninPayloadSchema,
+        dataToValidate,
+      );
+
+      if (!isValid) {
+        setErrors(validationErrors);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+
+      setIsLoading(true);
+
+      const response = await apiClient.post("/auth/login", dataToValidate);
+      const data = response.data;
+      dispatch(
+        setAuth({
+          user: data.user,
+          token: data.accessToken,
+        }),
+      );
+      setErrors({});
+      setForm({
+        email: "",
+        password: "",
+      });
+      setTimeout(() => {
+        navigate(PATHS.HOME);
+      }, 1000);
+    } catch (error) {
+      console.error("Signup Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="h-screen bg-white flex flex-col overflow-hidden">
@@ -42,7 +111,7 @@ export default function LoginPage() {
               />
             </div>
           </aside>
-
+          
           <section className="w-full lg:w-7/13  flex flex-col bg-white">
             <LinksToMe
               className="p-6 lg:hidden flex justify-center text-white bg-black"
@@ -58,10 +127,24 @@ export default function LoginPage() {
                     Login to your account
                   </p>
                 </div>
-                <Input type="email" placeholder="Email address" />
+                <Input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="Email address"
+                />
+                {errors.email && (
+                  <p className="text-xs text-red-500 mt-1 ml-1">
+                    {errors.email}
+                  </p>
+                )}
 
                 <div className="relative">
                   <Input
+                    name="password"
+                    value={form.password}
+                    onChange={handleChange}
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
                   />
@@ -74,6 +157,11 @@ export default function LoginPage() {
                     className="absolute right-4 top-1/2 -translate-y-1/2"
                   />
                 </div>
+                {errors.password && (
+                  <p className="text-xs text-red-500 mt-1 ml-1">
+                    {errors.password}
+                  </p>
+                )}
 
                 <div className="flex justify-end">
                   <Link
@@ -83,7 +171,14 @@ export default function LoginPage() {
                     Forgot password?
                   </Link>
                 </div>
-                <Button variant="primary">Login</Button>
+                <Button
+                  variant="primary"
+                  onClick={handleLogin}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Login account..." : "Login"}
+                </Button>
+
                 <Button variant="secondary">
                   <img
                     src={InputImage.googleImg}

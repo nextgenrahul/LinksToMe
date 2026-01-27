@@ -4,8 +4,8 @@ import { type AuthState, type AuthUser } from '../types';
 
 const initialState: AuthState = {
   user: null,
-  token: localStorage.getItem('accessToken'),
-  isAuthenticated: !!localStorage.getItem('accessToken'),
+  token: null,
+  isAuthenticated: false,
   isLoading: false,
 };
 
@@ -17,13 +17,12 @@ const authSlice = createSlice({
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.isAuthenticated = true;
-      localStorage.setItem('accessToken', action.payload.token);
+      state.isLoading= true;
     },
-    logout: (state) => {
+    clearAuth: (state) => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
-      localStorage.removeItem('accessToken');
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
@@ -31,5 +30,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setAuth, logout, setLoading } = authSlice.actions;
+export const { setAuth, clearAuth, setLoading } = authSlice.actions;
 export default authSlice.reducer;

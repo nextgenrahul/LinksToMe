@@ -1,6 +1,6 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import crypto from "crypto";
-import { TokenPayload } from "./auth.types";
+import { TokenPayload } from "../../modules/auth/auth.types";
 
 export const generateAccessToken = (userId: string): string => {
   const secret = process.env.ACCESS_TOKEN_SECRET;
