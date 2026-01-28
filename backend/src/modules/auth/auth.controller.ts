@@ -3,9 +3,25 @@ import authService from './auth.services';
 import { catchAsync } from 'backend/src/shared/utils/catchAsync';
 import { refreshTokenCookieOptions } from 'backend/src/config/cookies';
 import { AppError } from 'backend/src/shared/utils/AppError';
-
+// auth.middleware.ts
+export interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    username: string;
+    name: string;
+    account_status: "active" | "suspended" | "deleted";
+  };
+  token?: string;
+}
 export class AuthController {
   private service = authService;
+  public me = async (req: AuthRequest, res: Response) => {
+    return res.status(200).json({
+      user: req.user,
+    });
+  };
+
 
   public register = catchAsync(async (req: Request, res: Response) => {
     const payload = req.body;
@@ -52,24 +68,21 @@ export class AuthController {
 
   public generateRefreshToken = catchAsync(async (req: Request, res: Response) => {
     const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME!;
-    const refreshToken = req.cookies?.[cookieName];
+    const refreshToken = await req.cookies?.[cookieName];
     if (!refreshToken) {
       throw new AppError("Unauthorized: Token not found", 401);
     }
-    const { accessToken } = await this.service.refresh(refreshToken);
-
+    const { accessToken, user } = await this.service.refresh(refreshToken);
     return res.status(200).json({
       success: true,
       accessToken,
+      user
     });
   });
 
   public logout = catchAsync(async (req: Request, res: Response) => {
     const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME!;
     const refreshToken = req.cookies?.[cookieName];
-
-    console.log(cookieName)
-    console.log("Refresh token:", refreshToken);
 
     if (refreshToken) {
       await this.service.logout(refreshToken);
@@ -84,6 +97,8 @@ export class AuthController {
       message: "Logged out successfully",
     });
   });
+
+
 
 
 }

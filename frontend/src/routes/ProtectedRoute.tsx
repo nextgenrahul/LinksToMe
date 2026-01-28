@@ -6,7 +6,7 @@ export default function ProtectedRoute() {
 const { isAuthenticated, isLoading } = useSelector(
   (state: RootState) => state.auth
 );
-console.log("this "+ isAuthenticated)
+console.log("Check is Authenticated: "+ isAuthenticated)
 
 if (isLoading) {
   return <div>Checking session...</div>;

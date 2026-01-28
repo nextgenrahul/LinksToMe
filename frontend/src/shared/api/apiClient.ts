@@ -1,96 +1,41 @@
-import axios from "axios";
-import type { AxiosError, InternalAxiosRequestConfig } from "axios";
-import type { Store } from "@reduxjs/toolkit";
-import { setAuth, clearAuth } from "../../features/auth/store/authSlice";
+import axios, {
+  AxiosError,
+  type AxiosInstance,
+  type AxiosRequestConfig,
+} from "axios";
 
-let store: Store | null = null;
-export const injectStore = (_store: Store) => {
-  store = _store;
-};
+const BASE_URL =
+  import.meta.env.VITE_API_URL ?? "http://localhost:5000/api";
 
-const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1",
+const apiClient: AxiosInstance = axios.create({
+  baseURL: BASE_URL,
   withCredentials: true,
-  headers: { "Content-Type": "application/json" },
 });
 
-let isRefreshing = false;
-type FailedQueueItem = {
-  resolve: (token: string | null) => void;
-  reject: (error: unknown) => void;
-};
-
-let failedQueue: FailedQueueItem[] = [];
-
-const processQueue = (error: unknown, token: string | null) => {
-  failedQueue.forEach((p) =>
-    error ? p.reject(error) : p.resolve(token)
-  );
-  failedQueue = [];
-};
-
-/* REQUEST */
-apiClient.interceptors.request.use((config) => {
-  const token = store?.getState()?.auth?.token;
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-/* RESPONSE */
 apiClient.interceptors.response.use(
-  (res) => res,
+  (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & {
+    const originalRequest = error.config as AxiosRequestConfig & {
       _retry?: boolean;
     };
 
-    // 🔥 BYPASS refresh endpoint
-    if (originalRequest.url?.includes("/auth/refresh")) {
-      return Promise.reject(error);
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/auth/refresh")
+    ) {
+      originalRequest._retry = true;
+
+      try {
+        await apiClient.post("/auth/refresh");
+        return apiClient(originalRequest);
+      } catch {
+        return Promise.reject(error);
+      }
     }
 
-    if (error.response?.status !== 401 || originalRequest._retry) {
-      return Promise.reject(error);
-    }
-
-    originalRequest._retry = true;
-
-    if (isRefreshing) {
-      return new Promise((resolve, reject) => {
-        failedQueue.push({
-          resolve: (token: string | null) => {
-            if (token) {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-            }
-            resolve(apiClient(originalRequest));
-          },
-          reject,
-        });
-      });
-    }
-
-    isRefreshing = true;
-
-    try {
-      const { data } = await apiClient.post("/auth/refresh");
-      const { token, user } = data;
-
-      store?.dispatch(setAuth({ user, token }));
-      processQueue(null, token);
-
-      originalRequest.headers.Authorization = `Bearer ${token}`;
-      return apiClient(originalRequest);
-    } catch (err) {
-      processQueue(err, null);
-      store?.dispatch(clearAuth());
-      return Promise.reject(err);
-    } finally {
-      isRefreshing = false;
-    }
+    return Promise.reject(error);
   }
 );
 
 export default apiClient;
-

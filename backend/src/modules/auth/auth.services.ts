@@ -131,12 +131,24 @@ export class AuthService {
 			throw new AppError("Unauthorized", 401);
 		}
 
-		if (session.account_status !== "active") {
+		if (session.account_status != 'active') {
 			throw new AppError("Unauthorized", 401);
 		}
 
+		
+		if (!session || session.account_status !== "active") {
+			throw new AppError("User is not active", 401);
+		}
+
 		const accessToken = generateAccessToken(session.user_id);
-		return { accessToken };
+		return {
+			accessToken,
+			user: {
+				id: session.id,
+				email: session.email,
+				username: session.username,
+			},
+		};
 	}
 
 	public async logout(refreshToken: string): Promise<void> {

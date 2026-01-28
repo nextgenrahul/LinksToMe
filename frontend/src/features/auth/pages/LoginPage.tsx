@@ -11,13 +11,13 @@ import { PATHS } from "@/constants/paths";
 import type { SigninForm } from "../types";
 import { SigninPayloadSchema } from "@linkstome/shared";
 import { validateSchema } from "@/shared/utils/validation";
-import apiClient from "@/services/apiClient";
-import { useDispatch } from "react-redux";
-import { setAuth } from "../store/authSlice";
+import apiClient from "@/shared/api/apiClient";
+import { useAppDispatch } from "../../../store/hooks";
+import { bootstrapAuth } from "../store/authSlice";
 
 export default function LoginPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -62,14 +62,8 @@ export default function LoginPage() {
 
       setIsLoading(true);
 
-      const response = await apiClient.post("/auth/login", dataToValidate);
-      const data = response.data;
-      dispatch(
-        setAuth({
-          user: data.user,
-          token: data.accessToken,
-        }),
-      );
+      await apiClient.post("/auth/login", dataToValidate);
+      await dispatch(bootstrapAuth()).unwrap();
       setErrors({});
       setForm({
         email: "",
@@ -111,7 +105,7 @@ export default function LoginPage() {
               />
             </div>
           </aside>
-          
+
           <section className="w-full lg:w-7/13  flex flex-col bg-white">
             <LinksToMe
               className="p-6 lg:hidden flex justify-center text-white bg-black"

@@ -12,13 +12,13 @@ import type { SignupForm } from "../types";
 import { validateSchema } from "@/shared/utils/validation";
 import { SignupPayloadSchema } from "@linkstome/shared";
 import apiClient from "@/shared/api/apiClient";
-import { setAuth } from "../store/authSlice";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../../store/hooks";
+import { bootstrapAuth } from "../store/authSlice";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [form, setForm] = useState<SignupForm>({
@@ -137,14 +137,9 @@ export default function SignupPage() {
 
       setIsLoading(true);
 
-      const response = await apiClient.post("/auth/signup", dataToValidate);
-      const data = response.data;
-      dispatch(
-        setAuth({
-          user: data.user,
-          token: data.accessToken,
-        }),
-      );
+      await apiClient.post("/auth/signup", dataToValidate);
+      await dispatch(bootstrapAuth()).unwrap();
+
       setErrors({});
       setForm({
         fullName: "",

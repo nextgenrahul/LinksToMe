@@ -10,8 +10,8 @@ export const refreshTokenCookieOptions = (): CookieOptions => {
     return {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.REFRESH_TOKEN_COOKIE_SAMESITE as "strict" | "lax" | "none",
-        path: process.env.REFRESH_TOKEN_COOKIE_PATH,
+        sameSite: "lax",
+        path: "/api/v1/auth/refresh",
         maxAge: maxAgeDays * 24 * 60 * 60 * 1000,
     };
 };

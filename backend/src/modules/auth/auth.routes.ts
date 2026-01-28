@@ -2,6 +2,7 @@ import { Request, Router, Response, NextFunction, RequestHandler } from "express
 import { SignupPayloadSchema } from "@linkstome/shared";
 import { SchemaValidator } from "../../shared/middlewares/validator";
 import authController from "./auth.controller";
+import authMiddleware from "backend/src/shared/middlewares/auth.middleware";
 // import authMiddleware from './auth.midddleware';
 
 interface Route {
@@ -45,7 +46,14 @@ class AuthRoutes {
                 method: 'post',
                 path: '/logout',
                 handler: this.controller.logout.bind(this.controller),
-            }
+            },
+            {
+                method: "get",
+                path: "/me",
+                preHandler: authMiddleware.verify, // 🔥 HERE
+                handler: this.controller.me.bind(this.controller),
+            },
+
         ];
         routes.forEach((route) => {
             const handlers: RequestHandler[] = [];

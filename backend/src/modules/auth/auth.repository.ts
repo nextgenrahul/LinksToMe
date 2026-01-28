@@ -89,17 +89,32 @@ export class AuthRepository {
   public async findRefreshToken(tokenHash: string) {
     const query = `
       SELECT
-        rt.user_id,
-        rt.expires_at,
-        u.account_status
-      FROM refresh_tokens rt
-      JOIN users u ON u.id = rt.user_id
-      WHERE rt.token_hash = $1
-      LIMIT 1;
+      rt.user_id,
+      rt.expires_at,
+      u.id,
+      u.username,
+      u.email,
+      u.account_status,
+      u.created_at
+    FROM refresh_tokens rt
+    JOIN users u ON u.id = rt.user_id
+    WHERE rt.token_hash = $1
+    LIMIT 1;
+
     `;
 
     const { rows } = await dbService.query(query, [tokenHash]);
     return rows[0] ?? null;
+  }
+  public async findById(id: string) {
+    const query = `
+    SELECT id, email, username, name, account_status 
+    FROM users 
+    WHERE id = $1 
+    LIMIT 1;
+  `;
+    const { rows } = await dbService.query(query, [id]);
+    return rows[0];
   }
 
 
