@@ -1,28 +1,21 @@
-import { Request, Router, Response, NextFunction, RequestHandler } from "express";
+import { RequestHandler, Router } from "express";
 import { SignupPayloadSchema } from "@linkstome/shared";
 import { SchemaValidator } from "../../shared/middlewares/validator";
 import authController from "./auth.controller";
-import authMiddleware from "backend/src/shared/middlewares/auth.middleware";
-// import authMiddleware from './auth.midddleware';
+import authMiddleware from "../../shared/middlewares/auth.middleware";
+import { Route } from "./auth.types";
 
-interface Route {
-    method: 'get' | 'post' | 'put' | 'delete' | 'patch';
-    path: string;
-    preValidation?: RequestHandler;
-    preHandler?: RequestHandler;
-    handler: RequestHandler;
-}
 
 
 class AuthRoutes {
     private router: Router;
-    private controller;
-    // private middleware;
+    private controller: typeof authController;
+    private middleware: typeof authMiddleware;
 
     constructor() {
         this.router = Router();
         this.controller = authController;
-        // this.middleware = authMiddleware;
+        this.middleware = authMiddleware;
     }
 
     public init(): Router {
@@ -39,20 +32,20 @@ class AuthRoutes {
             },
             {
                 method: 'post',
-                path: '/refresh',
-                handler: this.controller.generateRefreshToken.bind(this.controller),
-            },
-            {
-                method: 'post',
                 path: '/logout',
                 handler: this.controller.logout.bind(this.controller),
             },
             {
+                method: 'post',
+                path: '/refresh',
+                handler: this.controller.generateRefreshToken.bind(this.controller),
+            },
+            {
                 method: "get",
                 path: "/me",
-                preHandler: authMiddleware.verify, // 🔥 HERE
+                preHandler: this.middleware.verify,
                 handler: this.controller.me.bind(this.controller),
-            },
+            }
 
         ];
         routes.forEach((route) => {
@@ -61,7 +54,6 @@ class AuthRoutes {
             if (route.preHandler) handlers.push(route.preHandler);
             handlers.push(route.handler);
 
-            // Dynamically assign to Express Router
             this.router[route.method](route.path, ...handlers);
         });
         return this.router;

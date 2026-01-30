@@ -6,6 +6,7 @@ import { AppError } from 'backend/src/shared/utils/AppError';
 import { generateAccessToken, generateRefreshToken, hashToken } from '../../shared/utils/auth.tokens';
 
 export class AuthService {
+	
 	private repo = authRepository;
 
 	private async issueTokens(
@@ -84,10 +85,7 @@ export class AuthService {
 	}
 
 
-	public async login(
-		payload: SigninPayload,
-		meta: { userAgent?: string; ip?: string }
-	) {
+	public async login(payload: SigninPayload, meta: { userAgent?: string; ip?: string }) {
 		const { email, password } = payload;
 
 		const user = await this.repo.findByIdentifier(email);
@@ -102,11 +100,10 @@ export class AuthService {
 
 		const isMatch = await bcrypt.compare(password, user.password);
 		if (!isMatch) {
-			throw new AppError("Invalid credentials", 401);
+			return new AppError("Invalid credentials/Password", 401);
 		}
 
-		const { accessToken, refreshToken } =
-			await this.issueTokens(user.id, meta);
+		const { accessToken, refreshToken } = await this.issueTokens(user.id, meta);
 
 		return {
 			user: {
@@ -118,6 +115,7 @@ export class AuthService {
 			refreshToken,
 		};
 	}
+
 
 	public async refresh(refreshToken: string) {
 		const tokenHash = hashToken(refreshToken);
@@ -135,7 +133,7 @@ export class AuthService {
 			throw new AppError("Unauthorized", 401);
 		}
 
-		
+
 		if (!session || session.account_status !== "active") {
 			throw new AppError("User is not active", 401);
 		}
@@ -151,19 +149,18 @@ export class AuthService {
 		};
 	}
 
+
 	public async logout(refreshToken: string): Promise<void> {
 		if (!refreshToken) return;
 
 		const tokenHash = hashToken(refreshToken);
+		console.log(tokenHash)
 		const deleted = await this.repo.deleteRefreshToken(tokenHash);
 
 		if (!deleted) {
 			console.warn("Logout: refresh token not found or already deleted");
 		}
 	}
-
-
-
 
 }
 

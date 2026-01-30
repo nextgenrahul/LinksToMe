@@ -1,3 +1,6 @@
+import { RequestHandler } from "express";
+
+
 export interface TokenPayload {
     sub: string;
     iat?: number;
@@ -10,4 +13,12 @@ export interface RefreshTokenPayload {
     userAgent?: string;
     ip?: string;
     expiresAt: Date;
+}
+
+export interface Route {
+    method: 'get' | 'post' | 'put' | 'delete' | 'patch';
+    path: string;
+    preValidation?: RequestHandler;
+    preHandler?: RequestHandler;
+    handler: RequestHandler;
 }

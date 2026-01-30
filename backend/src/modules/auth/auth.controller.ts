@@ -3,7 +3,8 @@ import authService from './auth.services';
 import { catchAsync } from 'backend/src/shared/utils/catchAsync';
 import { refreshTokenCookieOptions } from 'backend/src/config/cookies';
 import { AppError } from 'backend/src/shared/utils/AppError';
-// auth.middleware.ts
+
+
 export interface AuthRequest extends Request {
   user?: {
     id: string;
@@ -14,9 +15,12 @@ export interface AuthRequest extends Request {
   };
   token?: string;
 }
+
 export class AuthController {
   private service = authService;
+
   public me = async (req: AuthRequest, res: Response) => {
+    console.log(req.user)
     return res.status(200).json({
       user: req.user,
     });
@@ -33,14 +37,12 @@ export class AuthController {
 
     const { user, accessToken, refreshToken } = await this.service.signup(payload, meta);
 
-    // Refresh token 
     res.cookie(
       process.env.REFRESH_TOKEN_COOKIE_NAME!,
       refreshToken,
       refreshTokenCookieOptions()
     );
 
-    // Access Token
     return res.status(201).json({
       success: true,
       user,
@@ -49,10 +51,16 @@ export class AuthController {
   });
 
   public login = catchAsync(async (req: Request, res: Response) => {
-    const { user, accessToken, refreshToken } = await this.service.login(req.body, {
+    const result = await this.service.login(req.body, {
       userAgent: req.headers["user-agent"],
       ip: req.ip,
     });
+
+    if (result instanceof AppError) {
+      throw result;
+    }
+
+    const { user, accessToken, refreshToken } = result;
 
     res.cookie(
       process.env.REFRESH_TOKEN_COOKIE_NAME!,
@@ -69,10 +77,13 @@ export class AuthController {
   public generateRefreshToken = catchAsync(async (req: Request, res: Response) => {
     const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME!;
     const refreshToken = await req.cookies?.[cookieName];
+
     if (!refreshToken) {
       throw new AppError("Unauthorized: Token not found", 401);
     }
+
     const { accessToken, user } = await this.service.refresh(refreshToken);
+    
     return res.status(200).json({
       success: true,
       accessToken,
