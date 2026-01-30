@@ -1,5 +1,5 @@
 import { RequestHandler, Router } from "express";
-import { SignupPayloadSchema } from "@linkstome/shared";
+import { SignupPayloadSchema, SigninPayloadSchema } from "@linkstome/shared";
 import { SchemaValidator } from "../../shared/middlewares/validator";
 import authController from "./auth.controller";
 import authMiddleware from "../../shared/middlewares/auth.middleware";
@@ -23,11 +23,13 @@ class AuthRoutes {
             {
                 method: 'post',
                 path: '/signup',
+                preHandler: SchemaValidator.validate(SignupPayloadSchema),
                 handler: this.controller.register.bind(this.controller),
             },
             {
                 method: 'post',
                 path: '/login',
+                preHandler: SchemaValidator.validate(SigninPayloadSchema),
                 handler: this.controller.login.bind(this.controller),
             },
             {
@@ -44,7 +46,7 @@ class AuthRoutes {
                 method: "get",
                 path: "/me",
                 preHandler: this.middleware.verify,
-                handler: this.controller.me.bind(this.controller),
+                handler: this.controller.bootstrapSession.bind(this.controller) as any,
             }
 
         ];

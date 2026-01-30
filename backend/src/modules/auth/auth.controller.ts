@@ -1,30 +1,15 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import authService from './auth.services';
 import { catchAsync } from 'backend/src/shared/utils/catchAsync';
 import { refreshTokenCookieOptions } from 'backend/src/config/cookies';
 import { AppError } from 'backend/src/shared/utils/AppError';
+import { AuthRequest } from './auth.types';
+import { hashToken } from 'backend/src/shared/utils/auth.tokens';
+import authRepository from './auth.repository';
 
-
-export interface AuthRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    username: string;
-    name: string;
-    account_status: "active" | "suspended" | "deleted";
-  };
-  token?: string;
-}
 
 export class AuthController {
   private service = authService;
-
-  public me = async (req: AuthRequest, res: Response) => {
-    console.log(req.user)
-    return res.status(200).json({
-      user: req.user,
-    });
-  };
 
 
   public register = catchAsync(async (req: Request, res: Response) => {
@@ -83,7 +68,7 @@ export class AuthController {
     }
 
     const { accessToken, user } = await this.service.refresh(refreshToken);
-    
+
     return res.status(200).json({
       success: true,
       accessToken,
@@ -108,6 +93,45 @@ export class AuthController {
       message: "Logged out successfully",
     });
   });
+
+  public bootstrapSession = async (
+    req: AuthRequest,
+    _res: Response,
+    next: NextFunction
+  ) => {
+    const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME!;
+
+    const refreshToken = req.cookies?.[cookieName];
+
+    console.log(refreshToken)
+    if (!refreshToken) {
+      return next(new AppError("Unauthenticated", 401));
+    }
+
+    const refreshTokenHash = hashToken(refreshToken);
+
+    const session = await authRepository.findRefreshToken(refreshTokenHash);
+
+    if (!session || session.revoked_at || session.expires_at < new Date()) {
+      return next(new AppError("Session expired", 401));
+    }
+
+    const user = await authRepository.findById(session.user_id);
+
+    if (!user || user.account_status !== "active") {
+      return next(new AppError("Account restricted", 403));
+    }
+
+    req.user = {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      name: user.name,
+      account_status: user.account_status,
+    };
+
+    next();
+  };
 
 
 

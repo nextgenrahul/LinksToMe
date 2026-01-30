@@ -12,15 +12,14 @@ interface TokenPayload extends JwtPayload {
 }
 
 export interface AuthRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    username: string;
-    name: string;
-    account_status: "active" | "suspended" | "deleted";
-  };
-
-  token?: string;
+    user?: {
+        id: string;
+        email: string;
+        username: string;
+        name: string;
+        account_status: "active" | "suspended" | "deleted";
+    };
+    token?: string;
 }
 
 
@@ -28,8 +27,9 @@ class AuthMiddleware {
     public verify = async (req: AuthRequest, res: Response, next: NextFunction) => {
         try {
             let token = req.headers.authorization;
-            if (token && token.startsWith("Bearer ")) {
-                token = token.slice(7);
+
+            if (req.headers.authorization?.startsWith("Bearer ")) {
+                token = req.headers.authorization.slice(7);
             }
 
             if (!token) {
@@ -48,13 +48,10 @@ class AuthMiddleware {
                 throw new AppError("The user belonging to this token no longer exists.", 401);
             }
 
-            // 4. Status Enforcement
             if (user.account_status !== 'active') {
                 throw new AppError("Account restricted. Please contact support.", 403);
             }
 
-            // 5. Context Injection
-            // Attach the "Fresh" user data to the request for the next handler (Controller)
             req.user = {
                 id: user.id,
                 email: user.email,
@@ -62,9 +59,11 @@ class AuthMiddleware {
                 name: user.name,
                 account_status: user.account_status,
             };
+
             req.token = token;
 
             next();
+
         } catch (error: any) {
             if (error.name === "TokenExpiredError") {
                 return next(new AppError("Session expired. Please log in again.", 401));
@@ -72,7 +71,7 @@ class AuthMiddleware {
             if (error.name === "JsonWebTokenError") {
                 return next(new AppError("Invalid security token.", 401));
             }
-            next(error); // Pass unexpected errors to the Global Error Handler
+            next(error);
         }
     };
 }

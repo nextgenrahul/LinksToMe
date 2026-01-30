@@ -1,22 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { RootState } from "@/store";
 import apiClient from "@/shared/api/apiClient";
+import type { AuthState } from "../types";
 import type { AuthUser } from "../types";
 
-/* =========================
-   State
-========================= */
-interface AuthState {
-  user: AuthUser | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
-}
 
 const initialState: AuthState = {
   user: null,
+  token: null,
   isAuthenticated: false,
-  isLoading: true, // app bootstraps auth
+  isLoading: true, 
   error: null,
 };
 
@@ -26,11 +19,11 @@ const initialState: AuthState = {
 export const bootstrapAuth = createAsyncThunk<
   { user: AuthUser },
   void,
-  { rejectValue: string }
->("auth/bootstrap", async (_, { rejectWithValue }) => {
+  { rejectValue: string }>("auth/bootstrap", async (_, { rejectWithValue }) => {
   try {
     const res = await apiClient.get("/auth/me");
-    return res.data; // { user }
+    console.log(res.data)
+    return res.data; 
   } catch {
     return rejectWithValue("Unauthenticated");
   }
@@ -72,7 +65,6 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload ?? null;
       })
-
       // Logout
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
@@ -90,5 +82,4 @@ export default authSlice.reducer;
 ========================= */
 export const selectAuth = (state: RootState) => state.auth;
 export const selectUser = (state: RootState) => state.auth.user;
-export const selectIsAuthenticated = (state: RootState) =>
-  state.auth.isAuthenticated;
+export const selectIsAuthenticated = (state: RootState) =>  state.auth.isAuthenticated;

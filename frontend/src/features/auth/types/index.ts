@@ -1,5 +1,3 @@
-
-// // Standardized for all API communication
 export interface Birthday {
   year: number;   
   month: number;  
@@ -14,25 +12,24 @@ export interface SignupPayload {
   birthday: Birthday;   
 }
 
-// Optimized AuthUser for Social Media Features
 export interface AuthUser {
   id: string;
   username: string;
   name: string;
   email?: string;
   mobile?: string;
-  birthday: string; // Keep as ISO String for easy date-fns/moment.js use
+  birthday: string; 
   avatarUrl?: string;
   isVerified: boolean;
-  followerCount: number; // Added for social logic
-  followingCount: number; // Added for social logic
+  followerCount: number; 
+  followingCount: number; 
   createdAt: string;
 }
 
 export interface AuthResponse {
   user: AuthUser;
   accessToken: string;
-  refreshToken: string; // Required for silent refresh (Billionaire UX)
+  refreshToken: string; 
 }
 
 export interface AuthState {
@@ -42,8 +39,6 @@ export interface AuthState {
   isLoading: boolean;
 }
 
-
-// Signup Type 
 export type SignupForm = {
   fullName: string;
   email: string;
@@ -59,4 +54,22 @@ export type SignupForm = {
 export type SigninForm = {
   email: string;
   password: string;
+}
+
+export interface AuthState {
+  user: AuthUser | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
+}
+
+export interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    username: string;
+    name: string;
+    account_status: "active" | "suspended" | "deleted";
+  };
+  token?: string;
 }
