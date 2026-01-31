@@ -22,7 +22,8 @@ apiClient.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url?.includes("/auth/refresh")
+      !originalRequest.url?.includes("/auth/refresh") &&
+      !originalRequest.url?.includes("/auth/me")
     ) {
       originalRequest._retry = true;
 
@@ -37,5 +38,6 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
 
 export default apiClient;

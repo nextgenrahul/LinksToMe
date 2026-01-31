@@ -45,9 +45,9 @@ class AuthRoutes {
             {
                 method: "get",
                 path: "/me",
-                preHandler: this.middleware.verify,
-                handler: this.controller.bootstrapSession.bind(this.controller) as any,
-            }
+                // preHandler: this.middleware.verify,
+                handler: this.controller.bootstrapSession.bind(this.controller),
+            },
 
         ];
         routes.forEach((route) => {

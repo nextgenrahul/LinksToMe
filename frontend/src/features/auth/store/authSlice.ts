@@ -9,7 +9,7 @@ const initialState: AuthState = {
   user: null,
   token: null,
   isAuthenticated: false,
-  isLoading: true, 
+  isLoading: true,
   error: null,
 };
 
@@ -17,17 +17,19 @@ const initialState: AuthState = {
    Thunk: Bootstrap Session
 ========================= */
 export const bootstrapAuth = createAsyncThunk<
-  { user: AuthUser },
+  { user: AuthUser; accessToken: string; },
   void,
   { rejectValue: string }>("auth/bootstrap", async (_, { rejectWithValue }) => {
-  try {
-    const res = await apiClient.get("/auth/me");
-    console.log(res.data)
-    return res.data; 
-  } catch {
-    return rejectWithValue("Unauthenticated");
-  }
-});
+    try {
+      const res = await apiClient.get("/auth/me", {
+        withCredentials: true,
+      });
+
+      return res.data;
+    } catch {
+      return rejectWithValue("Unauthenticated");
+    }
+  });
 
 /* =========================
    Thunk: Logout
@@ -56,6 +58,7 @@ const authSlice = createSlice({
       })
       .addCase(bootstrapAuth.fulfilled, (state, action) => {
         state.user = action.payload.user;
+        state.token = action.payload.accessToken;
         state.isAuthenticated = true;
         state.isLoading = false;
       })
@@ -82,4 +85,4 @@ export default authSlice.reducer;
 ========================= */
 export const selectAuth = (state: RootState) => state.auth;
 export const selectUser = (state: RootState) => state.auth.user;
-export const selectIsAuthenticated = (state: RootState) =>  state.auth.isAuthenticated;
+export const selectIsAuthenticated = (state: RootState) => state.auth.isAuthenticated;

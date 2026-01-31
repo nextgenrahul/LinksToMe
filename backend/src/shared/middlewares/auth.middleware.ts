@@ -27,6 +27,7 @@ class AuthMiddleware {
     public verify = async (req: AuthRequest, res: Response, next: NextFunction) => {
         try {
             let token = req.headers.authorization;
+            console.log(req.headers.authorization)
 
             if (req.headers.authorization?.startsWith("Bearer ")) {
                 token = req.headers.authorization.slice(7);

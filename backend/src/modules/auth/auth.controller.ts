@@ -4,7 +4,7 @@ import { catchAsync } from 'backend/src/shared/utils/catchAsync';
 import { refreshTokenCookieOptions } from 'backend/src/config/cookies';
 import { AppError } from 'backend/src/shared/utils/AppError';
 import { AuthRequest } from './auth.types';
-import { hashToken } from 'backend/src/shared/utils/auth.tokens';
+import { generateAccessToken, hashToken } from 'backend/src/shared/utils/auth.tokens';
 import authRepository from './auth.repository';
 
 
@@ -80,9 +80,13 @@ export class AuthController {
     const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME!;
     const refreshToken = req.cookies?.[cookieName];
 
-    if (refreshToken) {
-      await this.service.logout(refreshToken);
+    if (!refreshToken) {
+      return res.status(200).json({
+        success: true,
+        message: "Token not found",
+      });
     }
+    await this.service.logout(refreshToken);
 
     res.clearCookie(cookieName, {
       path: process.env.REFRESH_TOKEN_COOKIE_PATH,
@@ -95,43 +99,53 @@ export class AuthController {
   });
 
   public bootstrapSession = async (
-    req: AuthRequest,
-    _res: Response,
+    req: Request,
+    res: Response,
     next: NextFunction
   ) => {
-    const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME!;
+    try {
+      const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME!;
+      const refreshToken = req.cookies?.[cookieName];
 
-    const refreshToken = req.cookies?.[cookieName];
+      if (!refreshToken) {
+        throw new AppError("Unauthenticated", 401);
+      }
 
-    console.log(refreshToken)
-    if (!refreshToken) {
-      return next(new AppError("Unauthenticated", 401));
+      const refreshTokenHash = hashToken(refreshToken);
+      const session = await authRepository.findRefreshToken(refreshTokenHash);
+
+      if (!session || session.revoked_at || session.expires_at < new Date()) {
+        throw new AppError("Session expired", 401);
+      }
+
+      const user = await authRepository.findById(session.user_id);
+
+      if (!user) {
+        throw new AppError("User not found", 404);
+      }
+
+      const accessToken = generateAccessToken(user.id);
+
+      if (!user || user.account_status !== "active") {
+        throw new AppError("Account restricted", 403);
+      }
+
+      return res.status(200).json({
+        success: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          name: user.name,
+          account_status: user.account_status,
+        },
+        accessToken
+      });
+    } catch (err) {
+      next(err);
     }
-
-    const refreshTokenHash = hashToken(refreshToken);
-
-    const session = await authRepository.findRefreshToken(refreshTokenHash);
-
-    if (!session || session.revoked_at || session.expires_at < new Date()) {
-      return next(new AppError("Session expired", 401));
-    }
-
-    const user = await authRepository.findById(session.user_id);
-
-    if (!user || user.account_status !== "active") {
-      return next(new AppError("Account restricted", 403));
-    }
-
-    req.user = {
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      name: user.name,
-      account_status: user.account_status,
-    };
-
-    next();
   };
+
 
 
 
