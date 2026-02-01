@@ -21,7 +21,7 @@ export class AuthController {
     };
 
     const { user, accessToken, refreshToken } = await this.service.signup(payload, meta);
-
+    
     res.cookie(
       process.env.REFRESH_TOKEN_COOKIE_NAME!,
       refreshToken,

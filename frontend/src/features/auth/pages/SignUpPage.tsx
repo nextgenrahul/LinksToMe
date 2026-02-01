@@ -14,6 +14,8 @@ import { SignupPayloadSchema } from "@linkstome/shared";
 import apiClient from "@/shared/api/apiClient";
 import { useAppDispatch } from "../../../store/hooks";
 import { bootstrapAuth } from "../store/authSlice";
+import { toast } from "react-toastify";
+import type { AxiosError } from "axios";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -140,7 +142,6 @@ export default function SignupPage() {
       await apiClient.post("/auth/signup", dataToValidate);
       await dispatch(bootstrapAuth()).unwrap();
 
-      setErrors({});
       setForm({
         fullName: "",
         email: "",
@@ -156,7 +157,9 @@ export default function SignupPage() {
         navigate(PATHS.HOME);
       }, 1000);
     } catch (error) {
-      console.error("Signup Error:", error);
+      const axiosError = error as AxiosError<{ message: string }>;
+      const message = axiosError?.response?.data?.message || "Signup failed. Please try again.";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

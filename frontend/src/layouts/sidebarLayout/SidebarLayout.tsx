@@ -1,17 +1,19 @@
 // import { useEffect, useRef, useState } from "react";
 import "../../assets/css/sidebar.css";
 import { navigation } from "../constants/sidebar.constants";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation} from "react-router-dom";
 import apiClient from "@/shared/api/apiClient";
+import { logoutUser } from "@/features/auth/store/authSlice";
 
 export default function SidebarLayout() {
   const location = useLocation();
   const pathname = location.pathname;
+  
 
   const isActive = (path: string) => pathname === path;
   // const [isMoreOpen, setIsMoreOpen] = useState(false);
   // const moreRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   // console.log(isMoreOpen);
   // const toggleMore = () => setIsMoreOpen((prev) => !prev);
 
@@ -26,10 +28,19 @@ export default function SidebarLayout() {
   //   return () => document.removeEventListener("mousedown", handleClickOutside);
   // }, []);
 
-  async function logoutUser() {
+async function logout() {
+  try {
     await apiClient.post("/auth/logout");
-    navigate("/login");
+  } catch {
+    // ignore
+  } finally {
+    logoutUser();
+    window.location.replace("/login");
   }
+}
+
+
+
   return (
     <aside className="hidden md:flex inset-y-0 left-40 z-50 flex-col text-white w-64">
       <div className="flex items-center justify-center h-16">
@@ -48,7 +59,7 @@ export default function SidebarLayout() {
       <nav className="flex-1 px-3 space-y-1 mb-6">
         <button
           className="relative flex items-center gap-4 px-3 py-3 text-xl font-medium text-red-600 rounded-full transition-all hover:bg-zinc-900"
-          onClick={() => logoutUser()}
+          onClick={() => logout()}
         >
           Logout
         </button>
