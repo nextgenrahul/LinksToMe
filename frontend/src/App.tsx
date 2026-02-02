@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useAppDispatch } from "./store/hooks";
 import { bootstrapAuth } from "./features/auth/store/authSlice";
 import { ToastContainer } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const dispatch = useAppDispatch();

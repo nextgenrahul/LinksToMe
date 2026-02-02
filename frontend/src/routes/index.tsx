@@ -4,6 +4,8 @@ import MainLayout from "@/layouts/MainLayout";
 import { authRoutes } from "@/features/auth";
 import ProtectedRoute from "./ProtectedRoute";
 import NotFound from "@/features/common/NotFound";
+import { searchRoutes } from "@/features/search";
+import { profileRoutes } from "@/features/profile";
 
 
 export const router = createBrowserRouter([
@@ -25,6 +27,9 @@ export const router = createBrowserRouter([
             path: PATHS.HOME,
             element: <div>Home Page Content</div>,
           },
+          ...searchRoutes,
+          ...profileRoutes
+
           
         ],
       },

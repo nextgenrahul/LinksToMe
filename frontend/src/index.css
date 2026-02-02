@@ -1,14 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  /* Default Light Theme Variables */
   --background: #60A5FA;
   --text: #000000;
-  --accent: #1d9bf0; /* Social Media Blue */
+  --accent: #1d9bf0;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;     
+}
+
+
 [data-theme='dark'] {
-  /* Dark Theme Variables */
   --background: #000000;
   --text: #ffffff;
   --accent: #1d9bf0;
