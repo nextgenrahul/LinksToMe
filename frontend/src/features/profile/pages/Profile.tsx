@@ -1,14 +1,10 @@
-'use client';
-
-import React from 'react';
-
 export default function Profile() {
   return (
       <main className="border-x border-gray-800 max-w-2xl">
         {/* Profile Header */}
         <div className="relative">
           {/* Banner */}
-          <div className="h-48 bg-gradient-to-b from-blue-900 to-blue-800 relative flex items-center justify-center">
+          <div className="h-48 bg-linear-to-b from-blue-900 to-blue-800 relative flex items-center justify-center">
             <h1 className="text-5xl font-semibold text-white/30 tracking-wider">Rahul shakya</h1>
           </div>
 

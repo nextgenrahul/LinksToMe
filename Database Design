@@ -12,6 +12,8 @@ Here’s a high-leverage feature roadmap grouped by system domain:
 * Profile system: bio, links, interests, badges, cover image.
 * Privacy controls: public/private profile, restricted access.
 
+
+
 ---
 
 ### **2. Post System (Media + Text)**
@@ -126,4 +128,67 @@ Here’s a high-leverage feature roadmap grouped by system domain:
 
 Do you want me to now map **database schema design** for all these modules (with relationships and entity breakdown)?
 That’s the next logical step.
+
+
+
+
+
+// Sql practice for this project 
+
+select * from patients;
+select * from admissions;
+select first_name, last_name from patients where weight between 100 and 120;
+update patients set allergies = "NKA" where allergies IS NULL; 
+SELECT CONCAT(first_name, ' ',last_name) AS full_name FROM patients;
+
+select p.first_name, p.last_name, pn.province_name from patients p join province_names pn on p.province_id = pn.province_id WHERE pn.province_name != 'On' OR province_name IS NULL;
+
+select count(birth_date) from patients where birth_date >= "2010-01-01" and birth_date < "2011-01-01";
+
+select first_name, last_name, height from patients where height = (select max(height) from patients);
+
+select patient_id, first_name, last_name, gender, birth_date, city, province_id, allergies, height, weight from patients where patient_id in (1,45,534,879,1000);
+
+select count(*) as total_admissions from admissions;
+
+select patient_id, admission_date, discharge_date, diagnosis, attending_doctor_id from admissions where admission_date = discharge_date;
+
+select patient_id, count(*) as total_admissions from admissions where patient_id = 579;
+
+SELECT DISTINCT(city) AS unique_cities FROM patients where province_id='NS';
+
+select first_name, last_name, birth_date from patients where height > 160 and weight > 70;
+
+select first_name, last_name, allergies from patients where allergies Is NOT null and city = 'Hamilton';
+
+select distinct year(birth_date) as birth_year from patients order by birth_year;
+
+select first_name from patients group by first_name having count(*) = 1;
+
+select patient_id, first_name from patients where first_name LIKE 'S%' And first_name like '%S' And length(first_name) >= 6;
+
+SELECT patient_id, first_name FROM patients WHERE first_name LIKE 's____%s';
+
+select p.patient_id, p.first_name, p.last_name from patients p left join admissions ad on ad.patient_id = p.patient_id where ad.diagnosis = 'Dementia';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
