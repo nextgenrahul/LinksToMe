@@ -73,3 +73,25 @@ CREATE INDEX idx_refresh_tokens_user_id
 ON refresh_tokens(user_id);
 CREATE UNIQUE INDEX idx_refresh_tokens_token_hash
 ON refresh_tokens(token_hash);
+
+
+
+
+-- User Interest Table 
+
+CREATE TABLE user_interests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    interest VARCHAR(100) NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT fk_user_interests_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
+CREATE UNIQUE INDEX idx_user_interests_unique
+ON user_interests(user_id, interest);
+

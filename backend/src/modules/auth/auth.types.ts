@@ -35,3 +35,22 @@ export interface AuthRequest extends Request {
   token?: string;
 
 }
+
+
+export interface RefreshTokenSession {
+  user_id: string;
+  expires_at: Date;
+  id: string;
+  username: string;
+  email: string;
+  account_status: string;
+  created_at: Date;
+}
+
+export interface UserRow {
+  id: string;
+  email: string;
+  username: string;
+  name: string;
+  account_status: string;
+}

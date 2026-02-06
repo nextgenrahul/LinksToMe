@@ -51,16 +51,16 @@ CREATE TABLE "auth_providers" (
   "created_at" timestamp DEFAULT (now())
 );
 
-CREATE TABLE "sessions" (
-  "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
-  "user_id" bigint NOT NULL,
-  "refresh_token" text NOT NULL,
-  "device_info" jsonb,
-  "ip_address" inet,
-  "last_active" timestamp DEFAULT (now()),
-  "expires_at" timestamp NOT NULL,
-  "created_at" timestamp DEFAULT (now())
-);
+-- CREATE TABLE "sessions" (
+--   "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
+--   "user_id" bigint NOT NULL,
+--   "refresh_token" text NOT NULL,
+--   "device_info" jsonb,
+--   "ip_address" inet,
+--   "last_active" timestamp DEFAULT (now()),
+--   "expires_at" timestamp NOT NULL,
+--   "created_at" timestamp DEFAULT (now())
+-- );
 
 CREATE TABLE "two_factor_auth" (
   "user_id" bigint PRIMARY KEY,

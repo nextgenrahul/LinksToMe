@@ -1,14 +1,15 @@
 import bcrypt from 'bcryptjs';
 import crypto from "crypto";
-import authRepository from './auth.repository';
+import { AuthRepository } from './auth.repository';
 import { SigninPayload, SignupPayload } from '@linkstome/shared';
 import { AppError } from 'backend/src/shared/utils/AppError';
 import { generateAccessToken, generateRefreshToken, hashToken } from '../../shared/utils/auth.tokens';
 
 export class AuthService {
-	
-	private repo = authRepository;
 
+	constructor(
+		private readonly repo: AuthRepository
+	) { }
 	private async issueTokens(
 		userId: string,
 		meta: { userAgent?: string; ip?: string }
@@ -37,6 +38,48 @@ export class AuthService {
 		return { accessToken, refreshToken };
 	}
 
+	async bootstrapSession(refreshToken: string) {
+		const tokenHash = hashToken(refreshToken);
+
+		const session = await this.repo.findRefreshToken(tokenHash);
+		if (!session) {
+			throw new AppError("Session expired", 401);
+		}
+
+		if (new Date(session.expires_at) < new Date()) {
+			throw new AppError("Session expired", 401);
+		}
+
+		if (session.account_status !== "active") {
+			throw new AppError("Account restricted", 403);
+		}
+
+		const accessToken = generateAccessToken(session.user_id);
+
+		return {
+			accessToken,
+			user: {
+				id: session.user_id,
+				email: session.email,
+				username: session.username,
+				account_status: session.account_status,
+			},
+		};
+	}
+
+	async getUserById(userId: string) {
+		const user = await this.repo.findUserById(userId);
+
+		if (!user) {
+			throw new AppError("User not found", 404);
+		}
+
+		if (user.account_status !== "active") {
+			throw new AppError("Account restricted", 403);
+		}
+
+		return user;
+	}
 
 	public async signup(payload: SignupPayload, meta: { userAgent?: string; ip?: string }) {
 		const exists = await this.repo.exists(payload.email);
@@ -125,18 +168,18 @@ export class AuthService {
 			throw new AppError("Unauthorized", 401);
 		}
 
+		if (!session) {
+			throw new AppError("Unauthorized", 401);
+		}
+
 		if (new Date(session.expires_at) < new Date()) {
 			throw new AppError("Unauthorized", 401);
 		}
 
-		if (session.account_status != 'active') {
-			throw new AppError("Unauthorized", 401);
+		if (session.account_status !== "active") {
+			throw new AppError("Account restricted", 403);
 		}
 
-
-		if (!session || session.account_status !== "active") {
-			throw new AppError("User is not active", 401);
-		}
 
 		const accessToken = generateAccessToken(session.user_id);
 		return {
@@ -154,7 +197,6 @@ export class AuthService {
 		if (!refreshToken) return;
 
 		const tokenHash = hashToken(refreshToken);
-		console.log(tokenHash)
 		const deleted = await this.repo.deleteRefreshToken(tokenHash);
 
 		if (!deleted) {
@@ -163,5 +205,3 @@ export class AuthService {
 	}
 
 }
-
-export default new AuthService();

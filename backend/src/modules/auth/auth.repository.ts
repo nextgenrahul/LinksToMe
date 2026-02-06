@@ -1,6 +1,6 @@
 import dbService from '../../config/database';
 import { SignupPayload } from '@linkstome/shared';
-import { RefreshTokenPayload } from './auth.types';
+import { RefreshTokenPayload, RefreshTokenSession, UserRow } from './auth.types';
 
 export class AuthRepository {
 
@@ -84,39 +84,36 @@ export class AuthRepository {
     return (result.rowCount ?? 0) > 0;
   }
 
-
-  public async findRefreshToken(tokenHash: string) {
+  async findRefreshToken(tokenHash: string) {
     const query = `
       SELECT
-      rt.user_id,
-      rt.expires_at,
-      u.id,
-      u.username,
-      u.email,
-      u.account_status,
-      u.created_at
-    FROM refresh_tokens rt
-    JOIN users u ON u.id = rt.user_id
-    WHERE rt.token_hash = $1
-    LIMIT 1;
+        rt.user_id,
+        rt.expires_at,
+        u.id,
+        u.username,
+        u.email,
+        u.account_status,
+        u.created_at
+      FROM refresh_tokens rt
+      JOIN users u ON u.id = rt.user_id
+      WHERE rt.token_hash = $1
+      LIMIT 1;
     `;
 
     const { rows } = await dbService.query(query, [tokenHash]);
     return rows[0] ?? null;
   }
 
-  public async findById(id: string) {
+  async findUserById(id: string){
     const query = `
-    SELECT id, email, username, name, account_status 
-    FROM users 
-    WHERE id = $1 
-    LIMIT 1;
-  `;
+      SELECT id, email, username, name, account_status
+      FROM users
+      WHERE id = $1
+      LIMIT 1;
+    `;
+
     const { rows } = await dbService.query(query, [id]);
-    return rows[0];
+    return rows[0] ?? null;
   }
 
-
 }
-
-export default new AuthRepository();

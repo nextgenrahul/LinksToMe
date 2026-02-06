@@ -1,16 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
-import authService from './auth.services';
+import { AuthService } from './auth.services';
 import { catchAsync } from 'backend/src/shared/utils/catchAsync';
 import { refreshTokenCookieOptions } from 'backend/src/config/cookies';
 import { AppError } from 'backend/src/shared/utils/AppError';
 import { AuthRequest } from './auth.types';
 import { generateAccessToken, hashToken } from 'backend/src/shared/utils/auth.tokens';
-import authRepository from './auth.repository';
-
 
 export class AuthController {
-  private service = authService;
 
+  constructor(
+    private readonly service: AuthService
+  ) { }
 
   public register = catchAsync(async (req: Request, res: Response) => {
     const payload = req.body;
@@ -21,7 +21,7 @@ export class AuthController {
     };
 
     const { user, accessToken, refreshToken } = await this.service.signup(payload, meta);
-    
+
     res.cookie(
       process.env.REFRESH_TOKEN_COOKIE_NAME!,
       refreshToken,
@@ -98,53 +98,22 @@ export class AuthController {
     });
   });
 
-  public bootstrapSession = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME!;
-      const refreshToken = req.cookies?.[cookieName];
+  public bootstrapSession = catchAsync(async (req: Request, res: Response) => {
+    const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME!;
+    const refreshToken = req.cookies?.[cookieName];
 
-      if (!refreshToken) {
-        throw new AppError("Unauthenticated", 401);
-      }
-
-      const refreshTokenHash = hashToken(refreshToken);
-      const session = await authRepository.findRefreshToken(refreshTokenHash);
-
-      if (!session || session.revoked_at || session.expires_at < new Date()) {
-        throw new AppError("Session expired", 401);
-      }
-
-      const user = await authRepository.findById(session.user_id);
-
-      if (!user) {
-        throw new AppError("User not found", 404);
-      }
-
-      const accessToken = generateAccessToken(user.id);
-
-      if (!user || user.account_status !== "active") {
-        throw new AppError("Account restricted", 403);
-      }
-
-      return res.status(200).json({
-        success: true,
-        user: {
-          id: user.id,
-          email: user.email,
-          username: user.username,
-          name: user.name,
-          account_status: user.account_status,
-        },
-        accessToken
-      });
-    } catch (err) {
-      next(err);
+    if (!refreshToken) {
+      throw new AppError("Unauthenticated", 401);
     }
-  };
+
+    const result = await this.service.bootstrapSession(refreshToken);
+
+    return res.status(200).json({
+      success: true,
+      ...result,
+    });
+  });
+
 
 
 
@@ -152,4 +121,4 @@ export class AuthController {
 
 }
 
-export default new AuthController();
+// export default new AuthController();
