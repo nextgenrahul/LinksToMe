@@ -211,6 +211,14 @@ SELECT first_name, last_name, 'Patient' as role FROM patients
 select first_name, last_name, 'Doctor' from doctors;
 
   
+  
+select distinct year(birth_date) as birth_year from patients order by birth_year asc;
+
+
+select allergies, count(*) as total_diagnosis from patients group by allergies having allergies IS NOT null order by total_diagnosis desc;
+
+
+
 
 
 
