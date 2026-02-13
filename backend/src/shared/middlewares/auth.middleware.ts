@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { verify } from "jsonwebtoken";
-import authRepository from "../../modules/auth/auth.repository";
+import {AuthRepository} from "../../modules/auth/auth.repository";
 import { AppError } from "../../shared/utils/AppError";
 import { JwtPayload } from "jsonwebtoken";
 
@@ -23,7 +23,10 @@ export interface AuthRequest extends Request {
 }
 
 
-class AuthMiddleware {
+export class AuthMiddleware {
+    constructor(private readonly repo : AuthRepository){
+
+    }
     public verify = async (req: AuthRequest, res: Response, next: NextFunction) => {
         try {
             let token = req.headers.authorization;
@@ -43,7 +46,7 @@ class AuthMiddleware {
             }
             const decoded = verify(token, secret) as TokenPayload;
 
-            const user = await authRepository.findById(decoded.sub);
+            const user = await this.repo.findUserById(decoded.sub);
 
             if (!user) {
                 throw new AppError("The user belonging to this token no longer exists.", 401);
@@ -76,5 +79,3 @@ class AuthMiddleware {
         }
     };
 }
-
-export default new AuthMiddleware();

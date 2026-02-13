@@ -218,6 +218,32 @@ select distinct year(birth_date) as birth_year from patients order by birth_year
 select allergies, count(*) as total_diagnosis from patients group by allergies having allergies IS NOT null order by total_diagnosis desc;
 
 
+SELECT first_name, last_name, birth_date
+FROM patients
+WHERE birth_date >= '1970-01-01'
+  AND birth_date < '1980-01-01'
+ORDER BY birth_date ASC;
+
+
+SELECT first_name, last_name, birth_date
+FROM patients
+WHERE birth_date >= '1970-01-01'
+  AND birth_date < '1980-01-01'
+ORDER BY birth_date ASC;
+
+select concat(upper(last_name), ',',lower(first_name)) as new_name_format from patients order by first_name desc;
+select province_id, sum(height) as sum_height from patients group by province_id having sum_height >= 7000;
+
+select max(weight) - min(weight) as weight_delta from patients where last_name = 'Maroni' ; 
+
+select * from admissions;
+
+SELECT 
+    day(admission_date) as day_number,
+    COUNT(*) AS number_of_admissions
+FROM admissions
+GROUP BY day(admission_date)
+ORDER BY number_of_admissions DESC;
 
 
 
@@ -226,11 +252,47 @@ select allergies, count(*) as total_diagnosis from patients group by allergies h
 
 
 
+select * from admissions where patient_id = 542;
+select patient_id, Max(admission_date) as admission_date, discharge_date, diagnosis, attending_doctor_id group by patient_id having patient_id = 542 ;
 
+SELECT *
+FROM admissions
+WHERE patient_id = 542
+group by patient_id
+having admissions = max(admission_date);
 
+SELECT patient_id, attending_doctor_id, diagnosis
+FROM admissions
+WHERE 
+(
+    patient_id % 2 = 1
+    AND attending_doctor_id IN (1, 5, 19)
+)
+OR
+(
+    CAST(attending_doctor_id AS CHAR) LIKE '%2%'
+    AND len(CAST(patient_id AS CHAR)) = 3
+);
 
+select 
+d.first_name,
+d.last_name, 
+count(a.attending_doctor_id) as admission_total
+from admissions a
+join doctors d on a.attending_doctor_id = d.doctor_id
+group by a.attending_doctor_id;
 
+select * from doctors;
 
+SELECT  
+    d.doctor_id,
+    CONCAT(d.first_name, ' ', d.last_name) AS full_name,
+    MIN(a.admission_date) AS first_admission_date,
+    MAX(a.admission_date) AS last_admission_date
+FROM doctors d
+JOIN admissions a
+    ON d.doctor_id = a.attending_doctor_id
+GROUP BY d.doctor_id, d.first_name, d.last_name;
 
 
 

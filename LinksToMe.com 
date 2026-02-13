@@ -195,4 +195,17 @@ If you're broke, you must replace money with architecture, not excuses.
                                                             LinksToMe.com
 
 Profiles: 
- 
+  .id 
+  .username
+  .name
+  .bio
+  .profile_picture_url
+  .is_private
+  .is_verified
+  .followers_count
+  .following_count
+  .posts_count
+  .user_links
+  .user_interests
+  .badges
+  .account_status   
