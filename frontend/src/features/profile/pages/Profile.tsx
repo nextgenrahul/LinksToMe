@@ -115,7 +115,7 @@ export default function Profile() {
       {/* Post */}
       <div className="border-b border-gray-500 p-4">
         <div className="flex gap-4">
-          <div className="w-12 h-12 bg-gray-700 rounded-full flex-shrink-0 flex items-center justify-center">
+          <div className="w-12 h-12 bg-gray-700 rounded-full shrink-0 flex items-center justify-center">
             <span className="text-2xl">👤</span>
           </div>
           <div className="flex-1">
@@ -164,7 +164,7 @@ export default function Profile() {
       </div>
       <div className="border-b border-gray-500 p-4">
         <div className="flex gap-4">
-          <div className="w-12 h-12 bg-gray-700 rounded-full flex-shrink-0 flex items-center justify-center">
+          <div className="w-12 h-12 bg-gray-700 rounded-full shrink-0 flex items-center justify-center">
             <span className="text-2xl">👤</span>
           </div>
           <div className="flex-1">
@@ -213,7 +213,7 @@ export default function Profile() {
       </div>
       <div className="border-b border-gray-500 p-4">
         <div className="flex gap-4">
-          <div className="w-12 h-12 bg-gray-700 rounded-full flex-shrink-0 flex items-center justify-center">
+          <div className="w-12 h-12 bg-gray-700 rounded-full shrink-0 flex items-center justify-center">
             <span className="text-2xl">👤</span>
           </div>
           <div className="flex-1">
@@ -262,7 +262,7 @@ export default function Profile() {
       </div>
       <div className="border-b border-gray-500 p-4">
         <div className="flex gap-4">
-          <div className="w-12 h-12 bg-gray-700 rounded-full flex-shrink-0 flex items-center justify-center">
+          <div className="w-12 h-12 bg-gray-700 rounded-full shrink-0 flex items-center justify-center">
             <span className="text-2xl">👤</span>
           </div>
           <div className="flex-1">
