@@ -19,7 +19,7 @@ import axios from "axios";
 export default function Profile() {
   const check = async () => {
     try {
-      const res = await apiClient.get("profile/check");
+      const res = await apiClient.get("/profile/me");
       console.log(res.data);
     } catch (err) {
       if (axios.isAxiosError(err)) {

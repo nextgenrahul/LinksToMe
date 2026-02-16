@@ -3,11 +3,11 @@ export const PATHS = {
   SEARCH: '/search',
   NOTIFICATIONS: '/notifications',
   MESSAGES: '/messages',
+  PROFILE: '/profile',
   QUERY: '/query',
   GLOBAL: '/global',
   LOGIN: '/login',
   SIGNUP: "/accounts/emailsignup",
   FORGOTPASSWORD: "/accounts/password/reset",
   BOOKMARKS: '/bookmarks',
-  PROFILE: '/profile',
 } as const;
