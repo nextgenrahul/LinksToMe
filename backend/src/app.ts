@@ -34,7 +34,7 @@ export class App {
             methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             allowedHeaders: ["Content-Type", "Authorization"],
         }));
-        this.app.use(helmet()); // High-level security headers
+        this.app.use(helmet()); 
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());

@@ -7,7 +7,6 @@ const server = new App(PORT);
 const start = async () => {
     await server.bootstrap();
     
-    // Start listening
     server.listen();
 };
 

@@ -7,7 +7,6 @@ export const globalErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  // Default values (DO NOT mutate err)
   let statusCode = 500;
   let message = 'Something went very wrong!';
   let status = 'error';

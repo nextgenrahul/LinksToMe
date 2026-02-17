@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { RootState } from "@/store";
-import apiClient from "@/shared/api/apiClient";
+import apiClient, { setAccessToken } from "@/shared/api/apiClient";
 import type { AuthState } from "../types";
 import type { AuthUser } from "../types";
 
@@ -13,23 +13,53 @@ const initialState: AuthState = {
   error: null,
 };
 
+export const bootstrapAuth = createAsyncThunk<
+  { user: AuthUser; accessToken: string },
+  void,
+  { rejectValue: string }
+>("auth/bootstrap", async (_, { rejectWithValue }) => {
+  try {
+    const refreshRes = await apiClient.post<{ accessToken: string }>(
+      "/auth/refresh"
+    );
+
+    const accessToken = refreshRes.data.accessToken;
+
+    setAccessToken(accessToken);
+
+    const meRes = await apiClient.get<{ user: AuthUser }>("/auth/me");
+
+    console.log(meRes)
+
+    return {
+      user: meRes.data.user,
+      accessToken,
+    };
+  } catch {
+    setAccessToken(null);
+    return rejectWithValue("Unauthenticated");
+  }
+});
+
+
+
 /* =========================
    Thunk: Bootstrap Session
 ========================= */
-export const bootstrapAuth = createAsyncThunk<
-  { user: AuthUser; accessToken: string; },
-  void,
-  { rejectValue: string }>("auth/bootstrap", async (_, { rejectWithValue }) => {
-    try {
-      const res = await apiClient.get("/auth/me", {
-        withCredentials: true,
-      });
+// export const bootstrapAuth = createAsyncThunk<
+//   { user: AuthUser; accessToken: string; },
+//   void,
+//   { rejectValue: string }>("auth/bootstrap", async (_, { rejectWithValue }) => {
+//     try {
+//       const res = await apiClient.get("/auth/me", {
+//         withCredentials: true,
+//       });
 
-      return res.data;
-    } catch {
-      return rejectWithValue("Unauthenticated");
-    }
-  });
+//       return res.data;
+//     } catch {
+//       return rejectWithValue("Unauthenticated");
+//     }
+//   });
 
 /* =========================
    Thunk: Logout
@@ -37,7 +67,8 @@ export const bootstrapAuth = createAsyncThunk<
 export const logoutUser = createAsyncThunk(
   "auth/logout",
   async () => {
-    await apiClient.post("/auth/logout"); // clears cookies server-side
+    await apiClient.post("/auth/logout");
+    setAccessToken(null);
   }
 );
 

@@ -3,8 +3,9 @@ import { SignupPayloadSchema, SigninPayloadSchema } from "@linkstome/shared";
 import { SchemaValidator } from "../../shared/middlewares/validator";
 import { AuthController } from "./auth.controller";
 import { Route } from "./auth.types";
+import { AuthMiddleware } from "backend/src/shared/middlewares/auth.middleware";
 
-export function authRoutes(controller: AuthController): Router {
+export function authRoutes(controller: AuthController, authMiddleware: AuthMiddleware): Router {
   const router = Router();
 
   const routes: Route[] = [
@@ -28,19 +29,24 @@ export function authRoutes(controller: AuthController): Router {
     {
       method: "post",
       path: "/refresh",
-      handler: controller.generateRefreshToken,
+      handler: controller.refresh,
     },
     {
       method: "get",
       path: "/me",
-      handler: controller.bootstrapSession,
+      preHandler: authMiddleware.verify,
+      handler: controller.me,
     },
   ];
 
   routes.forEach((route) => {
     const handlers: RequestHandler[] = [];
+
+    if (route.preValidation) handlers.push(route.preValidation);
     if (route.preHandler) handlers.push(route.preHandler);
+
     handlers.push(route.handler);
+
     router[route.method](route.path, ...handlers);
   });
 

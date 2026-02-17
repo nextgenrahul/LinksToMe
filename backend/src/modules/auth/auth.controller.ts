@@ -1,32 +1,29 @@
-import { NextFunction, Request, Response } from 'express';
-import { AuthService } from './auth.services';
-import { catchAsync } from 'backend/src/shared/utils/catchAsync';
-import { refreshTokenCookieOptions } from 'backend/src/config/cookies';
-import { AppError } from 'backend/src/shared/utils/AppError';
-import { AuthRequest } from './auth.types';
-import { generateAccessToken, hashToken } from 'backend/src/shared/utils/auth.tokens';
+import { Request, Response } from "express";
+import { AuthService } from "./auth.services";
+import { catchAsync } from "backend/src/shared/utils/catchAsync";
+import { refreshTokenCookieOptions } from "backend/src/config/cookies";
+import { AppError } from "backend/src/shared/utils/AppError";
 
 export class AuthController {
+  constructor(private readonly service: AuthService) { }
 
-  constructor(
-    private readonly service: AuthService
-  ) { }
+  private setRefreshCookie(res: Response, refreshToken: string) {
+    const cookieName =
+      process.env.REFRESH_TOKEN_COOKIE_NAME || "refreshToken";
+
+    res.cookie(cookieName, refreshToken, refreshTokenCookieOptions());
+  }
 
   public register = catchAsync(async (req: Request, res: Response) => {
-    const payload = req.body;
-
     const meta = {
       userAgent: req.headers["user-agent"],
       ip: req.ip,
     };
 
-    const { user, accessToken, refreshToken } = await this.service.signup(payload, meta);
+    const { user, accessToken, refreshToken } =
+      await this.service.signup(req.body, meta);
 
-    res.cookie(
-      process.env.REFRESH_TOKEN_COOKIE_NAME!,
-      refreshToken,
-      refreshTokenCookieOptions()
-    );
+    this.setRefreshCookie(res, refreshToken);
 
     return res.status(201).json({
       success: true,
@@ -36,22 +33,17 @@ export class AuthController {
   });
 
   public login = catchAsync(async (req: Request, res: Response) => {
-    const result = await this.service.login(req.body, {
+    const meta = {
       userAgent: req.headers["user-agent"],
       ip: req.ip,
-    });
+    };
+    console.log(req.user?.email)
 
-    if (result instanceof AppError) {
-      throw result;
-    }
+    const { user, accessToken, refreshToken } =
+      await this.service.login(req.body, meta);
 
-    const { user, accessToken, refreshToken } = result;
+    this.setRefreshCookie(res, refreshToken);
 
-    res.cookie(
-      process.env.REFRESH_TOKEN_COOKIE_NAME!,
-      refreshToken,
-      refreshTokenCookieOptions()
-    );
     return res.status(200).json({
       success: true,
       user,
@@ -59,37 +51,43 @@ export class AuthController {
     });
   });
 
-  public generateRefreshToken = catchAsync(async (req: Request, res: Response) => {
-    const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME!;
-    const refreshToken = await req.cookies?.[cookieName];
+  public refresh = catchAsync(async (req: Request, res: Response) => {
+    const cookieName =
+      process.env.REFRESH_TOKEN_COOKIE_NAME || "refreshToken";
 
-    if (!refreshToken) {
-      throw new AppError("Unauthorized: Token not found", 401);
-    }
 
-    const { accessToken, user } = await this.service.refresh(refreshToken);
+    const oldRefreshToken = req.cookies?.[cookieName];
+    console.log(oldRefreshToken)
+    if (!oldRefreshToken)
+      throw new AppError("Unauthorized", 401);
+
+    const meta = {
+      userAgent: req.headers["user-agent"],
+      ip: req.ip,
+    };
+
+    const { accessToken, refreshToken } =
+      await this.service.refresh(oldRefreshToken, meta);
+
+    this.setRefreshCookie(res, refreshToken);
 
     return res.status(200).json({
       success: true,
       accessToken,
-      user
     });
   });
 
+
   public logout = catchAsync(async (req: Request, res: Response) => {
-    const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME!;
+    const cookieName =
+      process.env.REFRESH_TOKEN_COOKIE_NAME || "refreshToken";
+
     const refreshToken = req.cookies?.[cookieName];
 
-    if (!refreshToken) {
-      return res.status(200).json({
-        success: true,
-        message: "Token not found",
-      });
-    }
     await this.service.logout(refreshToken);
 
     res.clearCookie(cookieName, {
-      path: process.env.REFRESH_TOKEN_COOKIE_PATH,
+      path: process.env.REFRESH_TOKEN_COOKIE_PATH || "/",
     });
 
     return res.status(200).json({
@@ -98,21 +96,19 @@ export class AuthController {
     });
   });
 
-  public bootstrapSession = catchAsync(async (req: Request, res: Response) => {
-    const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME!;
-    const refreshToken = req.cookies?.[cookieName];
+  public me = catchAsync(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
 
-    if (!refreshToken) {
-      throw new AppError("Unauthenticated", 401);
+    if (!userId) {
+      throw new AppError("Unauthorized", 401);
     }
 
-    const result = await this.service.bootstrapSession(refreshToken);
+    const user = await this.service.getUserById(userId);
 
     return res.status(200).json({
       success: true,
-      ...result,
+      user,
     });
   });
-
 
 }

@@ -10,7 +10,7 @@ const authController = new AuthController(authService);
 const authMiddleware = new AuthMiddleware(authRepository);
 
 export default {
-  routes: authRoutes(authController),
+  routes: authRoutes(authController, authMiddleware),
   controller: authController,
   service: authService,
   repository: authRepository,

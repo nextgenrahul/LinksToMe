@@ -8,7 +8,6 @@ interface Config {
   modulesPath: string;
   apiVersion: string;
   apiBasePath: string;
-  // Define which modules require mandatory authentication at the top level
   authRequiredForModule: Record<string, boolean>;
 }
 
@@ -81,7 +80,7 @@ class ModuleLoader {
         this.logger.log(`🚀 Routing: ${fullPath} --> ${moduleName}Module`);
 
         // Apply Global Auth Guard if configured for this module
-        if (requiresGlobalAuth && authGuard) {
+        if (requiresGlobalAuth && authGuard) { 
           app.use(fullPath, authGuard);
         }
 

@@ -45,9 +45,9 @@ export const fetchMyProfile = createAsyncThunk<
     const { data } = await apiClient.get("/profile/me");
     console.log(data)
     return data.data;
-  } catch (err: any) {
+  } catch {
     return rejectWithValue(
-      err.response?.data?.message || "Failed to fetch profile"
+      "Failed to fetch profile"
     );
   }
 });
@@ -63,9 +63,9 @@ export const updateMyProfile = createAsyncThunk<
   try {
     const { data } = await apiClient.patch("/profile/me", updateData);
     return data.data;
-  } catch (err: any) {
+  } catch{
     return rejectWithValue(
-      err.response?.data?.message || "Update failed"
+      "Update failed"
     );
   }
 });

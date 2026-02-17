@@ -1,24 +1,20 @@
 import { Router, RequestHandler } from "express";
 import { ProfileController } from "./profile.controller";
-import { Route } from "../auth/auth.types";
+import { Route } from "../profile/profile.types";
 import { AuthMiddleware } from "../../shared/middlewares/auth.middleware";
 
-export function profileRoute(
-    controller: ProfileController,
-    authMiddleware: AuthMiddleware
+export function profileRoute(controller: ProfileController, authMiddleware: AuthMiddleware
 ): Router {
 
     const router = Router();
 
     const routes: Route[] = [
-        // 🔹 Public - Check username
         {
             method: "get",
             path: "/check",
             handler: controller.checkUsername,
         },
 
-        // 🔹 Protected - Get my profile
         {
             method: "get",
             path: "/me",
@@ -26,7 +22,6 @@ export function profileRoute(
             handler: controller.getMyProfile,
         },
 
-        // 🔹 Protected - Update my profile
         {
             method: "patch",
             path: "/me",
@@ -34,7 +29,6 @@ export function profileRoute(
             handler: controller.updateProfile,
         },
 
-        // 🔹 Public - Get profile by username
         {
             method: "get",
             path: "/:username",

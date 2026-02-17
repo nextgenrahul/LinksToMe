@@ -90,7 +90,6 @@ export class ProfileController {
         req: Request,
         res: Response
     ) => {
-
         const usernameParam = req.query.username;
 
         if (typeof usernameParam !== "string" || usernameParam.trim() === "") {

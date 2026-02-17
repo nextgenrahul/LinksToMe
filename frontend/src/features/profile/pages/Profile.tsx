@@ -14,7 +14,6 @@
 
 import apiClient from "@/shared/api/apiClient";
 import { useEffect } from "react";
-import axios from "axios";
 
 export default function Profile() {
   const check = async () => {
@@ -22,11 +21,7 @@ export default function Profile() {
       const res = await apiClient.get("/profile/me");
       console.log(res.data);
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        console.log("Error:", err.response?.data);
-      } else {
         console.log("Error:", err);
-      }
     }
   };
 
@@ -312,3 +307,4 @@ export default function Profile() {
     </main>
   );
 }
+
