@@ -31,4 +31,7 @@ export type Profile = {
   following_count: number;
   posts_count: number;
   account_status: "active" | "restricted";
+  links: { label: string; url: string }[];
+  interests: { interest: string }[];
+  badges: { badge_code: string }[];
 };

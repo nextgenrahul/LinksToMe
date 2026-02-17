@@ -1,48 +1,49 @@
-// {
-//   "username",
-//   "name",
-//   "bio",
-//   "profile_picture_url",
-//   "website",
-//   "is_verified",
-//   "followers_count": 0,
-//   "following_count": 0,
-//   "links": [],
-//   "interests": [],
-//   "badges": []
-// }
-
 import apiClient from "@/shared/api/apiClient";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import type { Profile as ProfileType } from "../types";
 
 export default function Profile() {
-  const check = async () => {
+  const [profile, setProfile] = useState<ProfileType | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const fetchProfile = async () => {
     try {
-      const res = await apiClient.get("/profile/me");
-      console.log(res.data);
+      const res = await apiClient.get<{ data: ProfileType }>("/profile/me");
+      setProfile(res.data.data);
     } catch (err) {
-        console.log("Error:", err);
+      console.log("Error:", err);
+      setError("Failed to load profile");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    check();
+    fetchProfile();
   }, []);
+
+  if (loading) return <div className="text-white p-10">Loading...</div>;
+  if (error) return <div className="text-red-500 p-10">{error}</div>;
+  if (!profile) return null;
+
   return (
-    <main className="border-x border-gray-500 max-w-2xl">
+    <main className="border-x border-gray-500 max-w-2xl bg-black text-white min-h-screen">
       {/* Profile Header */}
       <div className="relative">
         {/* Banner */}
         <div className="h-48 bg-linear-to-b from-blue-900 to-blue-800 relative flex items-center justify-center">
-          <h1 className="text-5xl font-semibold text-white/30 tracking-wider">
-            Rahul shakya
-          </h1>
+            {/* Placeholder for banner if available in future */}
         </div>
 
         {/* Profile Picture */}
         <div className="absolute left-8 top-30">
-          <div className="w-32 h-32 bg-gray-700 rounded-full border-4 border-black flex items-center justify-center">
-            <span className="text-5xl">👤</span>
+          <div className="w-32 h-32 bg-gray-700 rounded-full border-4 border-black flex items-center justify-center overflow-hidden">
+             {profile.profile_picture_url ? (
+                <img src={profile.profile_picture_url} alt={profile.name} className="w-full h-full object-cover" />
+             ) : (
+                <span className="text-5xl">👤</span>
+             )}
           </div>
         </div>
 
@@ -51,46 +52,67 @@ export default function Profile() {
           <div className="flex justify-between items-start">
             <div>
               <h2 className="text-2xl font-bold flex items-center gap-2">
-                Rahul Shakya
-                <span className="text-blue-500">✔</span>
+                {profile.name}
+                {profile.is_verified && <span className="text-blue-500">✔</span>}
               </h2>
-              <p className="text-gray-500 text-lg">@nextgenrahul</p>
+              <p className="text-gray-500 text-lg">@{profile.username}</p>
             </div>
             <button className="border border-gray-500 hover:bg-gray-900 px-6 py-2 rounded-full font-semibold transition">
               Edit profile
             </button>
           </div>
 
-          <p className="mt-4 text-lg">
-            Full-Stack Developer | MERN & LAMP | SaaS & GenAI | Next.js | Python
-            | JavaScript
-          </p>
-          <p className="mt-2 text-lg">
-            Creating scalable products & real-world insights 📩 DM for queries
-          </p>
+          {profile.bio && (
+            <p className="mt-4 text-lg whitespace-pre-wrap">{profile.bio}</p>
+          )}
+          
+          {profile.website && (
+            <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline block mt-2">
+              🔗 {profile.website}
+            </a>
+          )}
+
+          <div className="flex gap-4 mt-2 flex-wrap">
+             {profile.interests.map((i, idx) => (
+                 <span key={idx} className="bg-gray-800 px-3 py-1 rounded-full text-sm text-gray-300">
+                     {i.interest}
+                 </span>
+             ))}
+          </div>
+
+           <div className="flex gap-4 mt-2 flex-wrap">
+             {profile.links.map((link, idx) => (
+                 <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline text-sm flex items-center gap-1">
+                     🔗 {link.label}
+                 </a>
+             ))}
+          </div>
+          
+           <div className="flex gap-4 mt-2 flex-wrap">
+             {profile.badges.map((b, idx) => (
+                 <span key={idx} title={b.badge_code} className="text-xl">
+                    🏅
+                 </span>
+             ))}
+          </div>
 
           <div className="flex gap-6 mt-4 text-gray-500">
-            <span>📍 Fatehabad</span>
-            <span>Joined February 2023</span>
+             {/* Join date would come from createdAt if we added it to the type, for now static or omitted if not in type clearly */}
           </div>
 
           <div className="flex gap-6 mt-4">
             <span>
-              <strong className="text-white">39</strong> Following
+              <strong className="text-white">{profile.following_count}</strong> Following
             </span>
             <span>
-              <strong className="text-white">1</strong> Follower
+              <strong className="text-white">{profile.followers_count}</strong> Followers
             </span>
           </div>
-
-          <a href="#" className="text-blue-500 mt-4 inline-block">
-            Get verified
-          </a>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-500">
+      <div className="flex border-b border-gray-500 mt-4">
         {["Posts", "Replies", "Highlights", "Articles", "Media", "Likes"].map(
           (tab) => (
             <button
@@ -107,202 +129,9 @@ export default function Profile() {
         )}
       </div>
 
-      {/* Post */}
-      <div className="border-b border-gray-500 p-4">
-        <div className="flex gap-4">
-          <div className="w-12 h-12 bg-gray-700 rounded-full shrink-0 flex items-center justify-center">
-            <span className="text-2xl">👤</span>
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <strong>Rahul Shakya</strong>
-              <span className="text-gray-500">@nextgenrahul · Nov 9, 2025</span>
-            </div>
-            <p className="mt-3 whitespace-pre-line">
-              Just checked memory usage of 3 platforms 🚀
-              {"\n\n"}
-              X: 286 MB
-              {"\n"}
-              YouTube: 201 MB
-              {"\n"}
-              LinkedIn: 1.2 GB 😅
-              {"\n\n"}
-              Why is a network for professionals heavier than a video platform?
-              {"\n"}
-              Feels like LinkedIn needs a performance review.
-              {"\n\n"}
-              #Tech #AIon #WebApps
-            </p>
-
-            {/* Attached Image Placeholder */}
-            <div className="mt-4 relative rounded-2xl overflow-hidden bg-gray-900">
-              <div className="aspect-video bg-gray-800 flex items-center justify-center">
-                <span className="text-gray-500 text-lg">
-                  Task Manager Screenshot (with circle & arrow)
-                </span>
-              </div>
-              {/* Simulated circle and arrow */}
-              <div className="absolute top-1/2 left-1/2 w-32 h-32 border-4 border-red-500 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-              <div className="absolute top-1/2 right-1/4 w-24 h-1 bg-red-500 -translate-y-1/2"></div>
-              <div className="absolute top-1/2 right-1/4 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-l-16 border-l-red-500 -translate-y-1/2"></div>
-            </div>
-
-            {/* Interaction Icons */}
-            <div className="flex justify-between mt-6 max-w-md text-gray-500">
-              <button className="hover:text-blue-500 transition">💬</button>
-              <button className="hover:text-green-500 transition">🔁</button>
-              <button className="hover:text-red-500 transition">❤️</button>
-              <button className="hover:text-blue-500 transition">🔖</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="border-b border-gray-500 p-4">
-        <div className="flex gap-4">
-          <div className="w-12 h-12 bg-gray-700 rounded-full shrink-0 flex items-center justify-center">
-            <span className="text-2xl">👤</span>
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <strong>Rahul Shakya</strong>
-              <span className="text-gray-500">@nextgenrahul · Nov 9, 2025</span>
-            </div>
-            <p className="mt-3 whitespace-pre-line">
-              Just checked memory usage of 3 platforms 🚀
-              {"\n\n"}
-              X: 286 MB
-              {"\n"}
-              YouTube: 201 MB
-              {"\n"}
-              LinkedIn: 1.2 GB 😅
-              {"\n\n"}
-              Why is a network for professionals heavier than a video platform?
-              {"\n"}
-              Feels like LinkedIn needs a performance review.
-              {"\n\n"}
-              #Tech #AIon #WebApps
-            </p>
-
-            {/* Attached Image Placeholder */}
-            <div className="mt-4 relative rounded-2xl overflow-hidden bg-gray-900">
-              <div className="aspect-video bg-gray-800 flex items-center justify-center">
-                <span className="text-gray-500 text-lg">
-                  Task Manager Screenshot (with circle & arrow)
-                </span>
-              </div>
-              {/* Simulated circle and arrow */}
-              <div className="absolute top-1/2 left-1/2 w-32 h-32 border-4 border-red-500 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-              <div className="absolute top-1/2 right-1/4 w-24 h-1 bg-red-500 -translate-y-1/2"></div>
-              <div className="absolute top-1/2 right-1/4 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-l-16 border-l-red-500 -translate-y-1/2"></div>
-            </div>
-
-            {/* Interaction Icons */}
-            <div className="flex justify-between mt-6 max-w-md text-gray-500">
-              <button className="hover:text-blue-500 transition">💬</button>
-              <button className="hover:text-green-500 transition">🔁</button>
-              <button className="hover:text-red-500 transition">❤️</button>
-              <button className="hover:text-blue-500 transition">🔖</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="border-b border-gray-500 p-4">
-        <div className="flex gap-4">
-          <div className="w-12 h-12 bg-gray-700 rounded-full shrink-0 flex items-center justify-center">
-            <span className="text-2xl">👤</span>
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <strong>Rahul Shakya</strong>
-              <span className="text-gray-500">@nextgenrahul · Nov 9, 2025</span>
-            </div>
-            <p className="mt-3 whitespace-pre-line">
-              Just checked memory usage of 3 platforms 🚀
-              {"\n\n"}
-              X: 286 MB
-              {"\n"}
-              YouTube: 201 MB
-              {"\n"}
-              LinkedIn: 1.2 GB 😅
-              {"\n\n"}
-              Why is a network for professionals heavier than a video platform?
-              {"\n"}
-              Feels like LinkedIn needs a performance review.
-              {"\n\n"}
-              #Tech #AIon #WebApps
-            </p>
-
-            {/* Attached Image Placeholder */}
-            <div className="mt-4 relative rounded-2xl overflow-hidden bg-gray-900">
-              <div className="aspect-video bg-gray-800 flex items-center justify-center">
-                <span className="text-gray-500 text-lg">
-                  Task Manager Screenshot (with circle & arrow)
-                </span>
-              </div>
-              {/* Simulated circle and arrow */}
-              <div className="absolute top-1/2 left-1/2 w-32 h-32 border-4 border-red-500 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-              <div className="absolute top-1/2 right-1/4 w-24 h-1 bg-red-500 -translate-y-1/2"></div>
-              <div className="absolute top-1/2 right-1/4 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-l-16 border-l-red-500 -translate-y-1/2"></div>
-            </div>
-
-            {/* Interaction Icons */}
-            <div className="flex justify-between mt-6 max-w-md text-gray-500">
-              <button className="hover:text-blue-500 transition">💬</button>
-              <button className="hover:text-green-500 transition">🔁</button>
-              <button className="hover:text-red-500 transition">❤️</button>
-              <button className="hover:text-blue-500 transition">🔖</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="border-b border-gray-500 p-4">
-        <div className="flex gap-4">
-          <div className="w-12 h-12 bg-gray-700 rounded-full shrink-0 flex items-center justify-center">
-            <span className="text-2xl">👤</span>
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <strong>Rahul Shakya</strong>
-              <span className="text-gray-500">@nextgenrahul · Nov 9, 2025</span>
-            </div>
-            <p className="mt-3 whitespace-pre-line">
-              Just checked memory usage of 3 platforms 🚀
-              {"\n\n"}
-              X: 286 MB
-              {"\n"}
-              YouTube: 201 MB
-              {"\n"}
-              LinkedIn: 1.2 GB 😅
-              {"\n\n"}
-              Why is a network for professionals heavier than a video platform?
-              {"\n"}
-              Feels like LinkedIn needs a performance review.
-              {"\n\n"}
-              #Tech #AIon #WebApps
-            </p>
-
-            {/* Attached Image Placeholder */}
-            <div className="mt-4 relative rounded-2xl overflow-hidden bg-gray-900">
-              <div className="aspect-video bg-gray-800 flex items-center justify-center">
-                <span className="text-gray-500 text-lg">
-                  Task Manager Screenshot (with circle & arrow)
-                </span>
-              </div>
-              {/* Simulated circle and arrow */}
-              <div className="absolute top-1/2 left-1/2 w-32 h-32 border-4 border-red-500 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-              <div className="absolute top-1/2 right-1/4 w-24 h-1 bg-red-500 -translate-y-1/2"></div>
-              <div className="absolute top-1/2 right-1/4 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-l-16 border-l-red-500 -translate-y-1/2"></div>
-            </div>
-
-            {/* Interaction Icons */}
-            <div className="flex justify-between mt-6 max-w-md text-gray-500">
-              <button className="hover:text-blue-500 transition">💬</button>
-              <button className="hover:text-green-500 transition">🔁</button>
-              <button className="hover:text-red-500 transition">❤️</button>
-              <button className="hover:text-blue-500 transition">🔖</button>
-            </div>
-          </div>
-        </div>
+      {/* Post Placeholder - In future, this should also come from API */}
+      <div className="p-4 text-center text-gray-500">
+          No posts yet.
       </div>
     </main>
   );

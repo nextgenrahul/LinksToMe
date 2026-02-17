@@ -36,9 +36,22 @@ export class ProfileRepository {
 
     async findById(userId: string) {
         const query = `
-      SELECT id, email, username, name,  bio, profile_picture_url,  website,is_private, is_verified, account_status, created_at
-      FROM users
-      WHERE id = $1
+      SELECT 
+        u.id, u.email, u.username, u.name, u.bio, u.profile_picture_url, u.website, u.is_private, u.is_verified, u.account_status, u.created_at,
+        COALESCE(
+          (SELECT json_agg(json_build_object('label', ul.label, 'url', ul.url) ORDER BY ul.position) 
+           FROM user_links ul WHERE ul.user_id = u.id), '[]'
+        ) AS links,
+        COALESCE(
+          (SELECT json_agg(json_build_object('interest', ui.interest)) 
+           FROM user_interests ui WHERE ui.user_id = u.id), '[]'
+        ) AS interests,
+        COALESCE(
+          (SELECT json_agg(json_build_object('badge_code', ub.badge_code)) 
+           FROM user_badges ub WHERE ub.user_id = u.id), '[]'
+        ) AS badges
+      FROM users u
+      WHERE u.id = $1
       LIMIT 1;
     `;
 
