@@ -4,6 +4,7 @@ export const PATHS = {
   NOTIFICATIONS: '/notifications',
   MESSAGES: '/messages',
   PROFILE: '/profile',
+  LINKS: '/links',
   QUERY: '/query',
   GLOBAL: '/global',
   LOGIN: '/login',

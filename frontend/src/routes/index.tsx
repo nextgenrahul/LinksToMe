@@ -6,6 +6,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import NotFound from "@/features/common/NotFound";
 import { searchRoutes } from "@/features/search";
 import { profileRoutes } from "@/features/profile";
+import { linksRoutes } from "@/features/Links";
 
 
 export const router = createBrowserRouter([
@@ -28,7 +29,9 @@ export const router = createBrowserRouter([
             element: <div>Home Page Content</div>,
           },
           ...searchRoutes,
-          ...profileRoutes
+          ...profileRoutes,
+            ...linksRoutes,
+
 
           
         ],

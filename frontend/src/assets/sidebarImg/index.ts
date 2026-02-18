@@ -15,9 +15,13 @@ import globalDark from "./globalDark.svg";
 import bookmarkdark from "./bookmarkdark.svg";
 import bookmarklight from "./bookmarklight.svg";
 import more from "./more.svg";
+import lightLinks from "./linkLight.svg";
+import openLinks from "./openLinks.svg";
 
 
 export const sidebarIcons = {
+  lightLinks,
+  openLinks,
   homeLight,
   homeDark,
   bellDark,
