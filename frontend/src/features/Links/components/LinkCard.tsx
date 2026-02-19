@@ -55,7 +55,6 @@ const LinkCard: React.FC<LinkCardProps> = ({
           </div>
         </div>
 
-        {/* Button */}
         <div className="mt-6">
           <a
             href={link}
