@@ -32,7 +32,7 @@ export default function MainLayout() {
           <SidebarLayout />
         </div>
 
-        <main className="flex-1 max-w-7xl h-screen overflow-y-auto border-l border-zinc-800 no-scrollbar">
+        <main className="flex-1 h-screen overflow-y-auto border-l border-zinc-800 no-scrollbar">
           <Outlet />
         </main>
       </div>

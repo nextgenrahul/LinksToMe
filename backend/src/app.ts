@@ -7,6 +7,7 @@ import dbService from "./config/database"; // Using your Raw SQL Pool service
 import { globalErrorHandler } from './shared/middlewares/error.middleware';
 import { AppError } from './shared/utils/AppError';
 import cookieParser from 'cookie-parser';
+import type { LinksController } from './modules/links/links.controller';
 
 
 
@@ -34,7 +35,7 @@ export class App {
             methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             allowedHeaders: ["Content-Type", "Authorization"],
         }));
-        this.app.use(helmet()); 
+        this.app.use(helmet());
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
@@ -78,6 +79,15 @@ export class App {
             // 3. Register Routes automatically
             await moduleLoader.registerRoutes(this.app);
             console.log('📦 All modules registered');
+
+            // 4. Top-level public redirect route: GET /r/:slug
+            //    Must be registered AFTER modules are loaded so the controller is available
+            const linksModule = (moduleLoader as any)['modules']?.get('links');
+            if (linksModule?.controller) {
+                const linksCtrl = linksModule.controller as LinksController;
+                this.app.get('/r/:slug', linksCtrl.redirect);
+                console.log('🔗 Redirect route registered: GET /r/:slug');
+            }
 
             // 4. Handle unknown routes (404)
             this.app.use((req, res, next) => {

@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '@/features/auth/store/authSlice';
 import { ProfileReducer } from '@/features/profile';
+import { LinksReducer } from '@/features/Links';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    profile: ProfileReducer
+    profile: ProfileReducer,
+    links: LinksReducer,
     // Future features will be added here:
     // feed: feedReducer,
     // messages: messageReducer,

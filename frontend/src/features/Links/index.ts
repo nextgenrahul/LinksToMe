@@ -1,2 +1,2 @@
 export { linksRoutes } from "./route";
-// export { default as ProfileReducer } from "./store/profileSlice";
+export { default as LinksReducer } from "./store/linksSlice";

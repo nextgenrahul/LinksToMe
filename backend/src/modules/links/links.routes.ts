@@ -2,16 +2,31 @@ import { Router, RequestHandler } from "express";
 import { LinksController } from "./links.controller";
 import { AuthMiddleware } from "../../shared/middlewares/auth.middleware";
 import { Route } from "./links.types";
-export function linksRoute(controller: LinksController, authMiddleware: AuthMiddleware
-): Router {
 
+export function linksRoute(
+    controller: LinksController,
+    authMiddleware: AuthMiddleware
+): Router {
     const router = Router();
 
     const routes: Route[] = [
+        // ─── Public ───────────────────────────────────────────────────────────
         {
+            // Redirect route — no auth required
+            // GET /r/:slug  → resolves slug, records click, 302 redirects
             method: "get",
-            path: "/check",
-            handler: controller.check,
+            path: "/r/:slug",
+            handler: controller.redirect,
+        },
+
+        // ─── Protected ────────────────────────────────────────────────────────
+        {
+            // Analytics for a specific link — auth required
+            // GET /links/:id/analytics
+            method: "get",
+            path: "/:id/analytics",
+            preHandler: authMiddleware.verify,
+            handler: controller.getAnalytics,
         },
     ];
 
@@ -27,4 +42,4 @@ export function linksRoute(controller: LinksController, authMiddleware: AuthMidd
     });
 
     return router;
-} 
+}
