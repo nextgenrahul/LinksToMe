@@ -257,7 +257,7 @@ export default function Profile() {
         )}
 
         {/* Interest tags */}
-        {profile.interests.length > 0 && (
+        {(profile.interests ?? []).length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
             {profile.interests.map(({ interest }, i) => (
               <span
@@ -271,7 +271,7 @@ export default function Profile() {
         )}
 
         {/* Badges */}
-        {profile.badges.length > 0 && (
+        {(profile.badges ?? []).length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
             {profile.badges.map(({ badge_code }, i) => (
               <span
@@ -286,7 +286,7 @@ export default function Profile() {
         )}
 
         {/* Links */}
-        {profile.links.length > 0 && (
+        {(profile.links ?? []).length > 0 && (
           <div className="flex flex-wrap gap-3 mb-3">
             {profile.links.map((link, i) => (
               <a
@@ -306,13 +306,13 @@ export default function Profile() {
         <div className="flex gap-5 mb-4 text-sm">
           <span className="text-zinc-400">
             <strong className="text-white font-bold">
-              {profile.following_count.toLocaleString()}
+              {(profile.following_count ?? 0).toLocaleString()}
             </strong>{" "}
             Following
           </span>
           <span className="text-zinc-400">
             <strong className="text-white font-bold">
-              {profile.followers_count.toLocaleString()}
+              {(profile.followers_count ?? 0).toLocaleString()}
             </strong>{" "}
             Followers
           </span>

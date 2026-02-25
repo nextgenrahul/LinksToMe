@@ -17,9 +17,9 @@ import { Profile, UpdateProfileData } from "./profile.types";
 import { xContentTypeOptions } from "helmet";
 export class ProfileRepository {
 
-    // This fn is for public 
-    async findByUsername(username: string): Promise<Profile | null> {
-        const query = `
+  // This fn is for public 
+  async findByUsername(username: string): Promise<Profile | null> {
+    const query = `
            SELECT id, username, name, bio, profile_picture_url, website, is_private, followers_count, following_count, posts_count, created_at 
            FROM users 
            WHERE username = $1
@@ -27,17 +27,19 @@ export class ProfileRepository {
            LIMIT 1;
         `;
 
-        const { rows } = await dbService.query<Profile>(query, [username]);
-        return rows[0] ?? null;
+    const { rows } = await dbService.query<Profile>(query, [username]);
+    return rows[0] ?? null;
 
-    }
+  }
 
-    // This fn for find by id
+  // This fn for find by id
 
-    async findById(userId: string) {
-        const query = `
+  async findById(userId: string) {
+    const query = `
       SELECT 
         u.id, u.email, u.username, u.name, u.bio, u.profile_picture_url, u.website, u.is_private, u.is_verified, u.account_status, u.created_at,
+        COALESCE(u.followers_count, 0) AS followers_count,
+        COALESCE(u.following_count, 0) AS following_count,
         COALESCE(
           (SELECT json_agg(json_build_object('label', ul.label, 'url', ul.url) ORDER BY ul.position) 
            FROM user_links ul WHERE ul.user_id = u.id), '[]'
@@ -55,14 +57,14 @@ export class ProfileRepository {
       LIMIT 1;
     `;
 
-        const { rows } = await dbService.query(query, [userId]);
-        return rows[0] ?? null;
-    }
+    const { rows } = await dbService.query(query, [userId]);
+    return rows[0] ?? null;
+  }
 
-    // For updating profile for logged in user
+  // For updating profile for logged in user
 
-    async updateProfile(userId: string, data: UpdateProfileData) {
-        const query = `
+  async updateProfile(userId: string, data: UpdateProfileData) {
+    const query = `
         UPDATE users
         SET 
         name = COALESCE($2, name),
@@ -75,23 +77,23 @@ export class ProfileRepository {
         RETURNING id, username, name, bio, website, profile_picture_url, is_private;
         `;
 
-        const values = [
-            userId,
-            data.name ?? null,
-            data.bio ?? null,
-            data.website ?? null,
-            data.profile_picture_url ?? null,
-            data.is_private ?? null,
-        ];
+    const values = [
+      userId,
+      data.name ?? null,
+      data.bio ?? null,
+      data.website ?? null,
+      data.profile_picture_url ?? null,
+      data.is_private ?? null,
+    ];
 
-        const { rows } = await dbService.query(query, values);
-        return rows[0] ?? null;
-    }
+    const { rows } = await dbService.query(query, values);
+    return rows[0] ?? null;
+  }
 
 
-    // this fn is for username exists or not
-    async usernameExists(username: string) {
-        const query = `
+  // this fn is for username exists or not
+  async usernameExists(username: string) {
+    const query = `
         SELECT id 
         FROM users 
         WHERE username = $1 
@@ -99,9 +101,9 @@ export class ProfileRepository {
         LIMIT 1;
         `;
 
-        const { rows } = await dbService.query(query, [username]);
-        return rows.length > 0;
-    }
+    const { rows } = await dbService.query(query, [username]);
+    return rows.length > 0;
+  }
 
 
 
