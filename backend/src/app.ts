@@ -18,7 +18,6 @@ export class App {
     constructor(port: number | string) {
         this.app = express();
         this.port = port;
-
         // Configuration Flow
         this.initializeMiddlewares();
         this.initializeHealthCheck();
