@@ -17,9 +17,12 @@ import bookmarklight from "./bookmarklight.svg";
 import more from "./more.svg";
 import lightLinks from "./linkLight.svg";
 import openLinks from "./openLinks.svg";
-
+import lightDashboard from './dashboard-light.svg';
+import darkDashboard from './dashboard-dark.svg';
 
 export const sidebarIcons = {
+  darkDashboard,
+  lightDashboard,
   lightLinks,
   openLinks,
   homeLight,

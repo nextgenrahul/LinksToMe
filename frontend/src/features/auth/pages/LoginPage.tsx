@@ -70,7 +70,7 @@ export default function LoginPage() {
         password: "",
       });
       setTimeout(() => {
-        navigate(PATHS.HOME);
+        navigate(PATHS.DASHBOARD);
       }, 1000);
     } catch (error) {
       console.error("Signup Error:", error);

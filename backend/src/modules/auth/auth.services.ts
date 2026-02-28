@@ -62,6 +62,7 @@ export class AuthService {
 
 		const isMatch = await bcrypt.compare(payload.password, user.password);
 		if (!isMatch) throw new AppError("Invalid credentials", 401);
+		
 
 		const tokens = await this.issueTokens(user.id, meta);
 

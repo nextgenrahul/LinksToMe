@@ -37,7 +37,6 @@ export class AuthController {
       userAgent: req.headers["user-agent"],
       ip: req.ip,
     };
-    console.log(req.user?.email)
 
     const { user, accessToken, refreshToken } =
       await this.service.login(req.body, meta);
@@ -57,7 +56,6 @@ export class AuthController {
 
 
     const oldRefreshToken = req.cookies?.[cookieName];
-    console.log(oldRefreshToken)
     if (!oldRefreshToken)
       throw new AppError("Unauthorized", 401);
 

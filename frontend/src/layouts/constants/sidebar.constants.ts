@@ -15,11 +15,17 @@ export interface MoreItem {
 
 export const navigation: NavItem[] = [
   {
-    name: "Home",
-    href: "/home",
-    mainImg: sidebarIcons.homeDark,
-    hoverImg:sidebarIcons.homeLight,
+    name: "Dashboard",
+    href: "/dashboard",
+    mainImg: sidebarIcons.darkDashboard,
+    hoverImg:sidebarIcons.lightDashboard,
   },
+  // {
+  //   name: "Home",
+  //   href: "/home",
+  //   mainImg: sidebarIcons.homeDark,
+  //   hoverImg:sidebarIcons.homeLight,
+  // },
   {
     name: "Links",
     href: "/links",

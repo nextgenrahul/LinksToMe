@@ -154,7 +154,7 @@ export default function SignupPage() {
         },
       });
       setTimeout(() => {
-        navigate(PATHS.HOME);
+        navigate(PATHS.DASHBOARD);
       }, 1000);
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;

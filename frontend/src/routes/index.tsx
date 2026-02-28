@@ -22,11 +22,11 @@ export const router = createBrowserRouter([
         children: [
           { 
             index: true,
-            element: <Navigate to={PATHS.HOME} replace />,
+            element: <Navigate to={PATHS.DASHBOARD} replace />,
           },
           {
-            path: PATHS.HOME,
-            element: <div>Home Page Content</div>,
+            path: PATHS.DASHBOARD,
+            element: <div>Dashboard Page Content</div>,
           },
           ...searchRoutes,
           ...profileRoutes,
