@@ -23,3 +23,10 @@ export interface CreateLinkPayload {
   label?: string;
   url: string;
 }
+
+
+// interface LinkCardProps {
+//   link: UserLink;
+//   onDelete: (id: string) => void;
+//   onViewAnalytics: (id: string) => void;
+// }

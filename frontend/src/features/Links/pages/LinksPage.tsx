@@ -30,11 +30,11 @@ function getPlatformIcon(url: string): string {
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 function Skeleton({ className }: { className?: string }) {
-  return (
-    <div
-      className={`rounded-xl bg-zinc-800 animate-pulse ${className ?? ""}`}
-    />
-  );
+	return (
+		<div
+		className={`rounded-xl bg-zinc-800 animate-pulse ${className ?? ""}`}
+		/>
+	);
 }
 
 // ─── Add Link Modal ───────────────────────────────────────────────────────────
@@ -51,7 +51,7 @@ function AddLinkModal({ onClose, onAdded }: AddLinkModalProps) {
 
   const handleAdd = async () => {
     if (!url.trim()) {
-      setErr("URL is required");
+      setErr("URL is requigreen");
       return;
     }
     setSaving(true);
@@ -92,7 +92,7 @@ function AddLinkModal({ onClose, onAdded }: AddLinkModalProps) {
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder="e.g. GitHub, Portfolio"
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-violet-500 transition"
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-green-500 transition"
             />
           </div>
           <div>
@@ -103,10 +103,10 @@ function AddLinkModal({ onClose, onAdded }: AddLinkModalProps) {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://github.com/yourname"
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-violet-500 transition"
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-green-500 transition"
             />
           </div>
-          {err && <p className="text-red-400 text-xs">{err}</p>}
+          {err && <p className="text-green-400 text-xs">{err}</p>}
         </div>
 
         <div className="flex gap-3 pt-1">
@@ -119,7 +119,7 @@ function AddLinkModal({ onClose, onAdded }: AddLinkModalProps) {
           <button
             onClick={handleAdd}
             disabled={saving}
-            className="flex-1 py-2.5 rounded-full bg-violet-600 text-white text-sm font-semibold hover:bg-violet-700 transition disabled:opacity-50"
+            className="flex-1 py-2.5 rounded-full bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition disabled:opacity-50"
           >
             {saving ? "Adding…" : "Add Link"}
           </button>
@@ -162,9 +162,9 @@ function LinkCard({ link, onDelete, onViewAnalytics }: LinkCardProps) {
   };
 
   return (
-    <div className="relative group rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-600 transition-all duration-300 overflow-hidden">
+    <div className="relative group rounded-sm bg-zinc-900 border border-zinc-800 hover:border-zinc-600 transition-all duration-300 overflow-hidden">
       {/* Ambient glow on hover */}
-      <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-violet-600/10 blur-2xl opacity-0 group-hover:opacity-100 transition duration-500" />
+      <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-green-600/10 blur-2xl opacity-0 group-hover:opacity-100 transition duration-500" />
 
       {/* Platform icon bubble */}
       <div className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center">
@@ -186,7 +186,7 @@ function LinkCard({ link, onDelete, onViewAnalytics }: LinkCardProps) {
         <p className="text-zinc-500 text-xs mt-0.5 truncate">{hostname}</p>
 
         {link.slug && (
-          <span className="inline-block mt-2 text-xs bg-violet-500/10 border border-violet-500/20 text-violet-400 px-2 py-0.5 rounded-full">
+          <span className="inline-block mt-2 text-xs bg-green-500/10 border border-green-500/20 text-green-400 px-2 py-0.5 rounded-sm">
             /r/{link.slug}
           </span>
         )}
@@ -197,20 +197,20 @@ function LinkCard({ link, onDelete, onViewAnalytics }: LinkCardProps) {
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 text-center text-sm py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition"
+            className="flex-1 text-center text-sm py-2 rounded-sm bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition"
           >
             Visit ↗
           </a>
           <button
             onClick={() => onViewAnalytics(link.id)}
-            className="flex-1 text-center text-sm py-2 rounded-xl bg-violet-600/20 hover:bg-violet-600/30 border border-violet-600/30 text-violet-400 transition"
+            className="flex-1 text-center text-sm py-2 rounded-sm bg-green-600/20 hover:bg-green-600/30 border border-green-600/30 text-green-400 transition"
           >
             📊 Analytics
           </button>
           {!showConfirm ? (
             <button
               onClick={() => setShowConfirm(true)}
-              className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-red-500/10 text-zinc-600 hover:text-red-400 transition text-lg"
+              className="w-9 h-9 flex items-center justify-center rounded-sm hover:bg-green-500/10 text-zinc-600 hover:text-green-400 transition text-lg"
               title="Delete"
             >
               🗑
@@ -219,7 +219,7 @@ function LinkCard({ link, onDelete, onViewAnalytics }: LinkCardProps) {
             <button
               onClick={handleDelete}
               disabled={deleting}
-              className="px-3 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition disabled:opacity-50"
+              className="px-3 py-2 rounded-sm bg-green-600 text-white text-xs font-semibold hover:bg-green-700 transition disabled:opacity-50"
             >
               {deleting ? "…" : "Confirm"}
             </button>
@@ -245,7 +245,7 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
       </div>
       <button
         onClick={onAdd}
-        className="px-6 py-2.5 rounded-full bg-violet-600 text-white text-sm font-semibold hover:bg-violet-700 transition"
+        className="px-6 py-2.5 rounded-full bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition"
       >
         + Add your first link
       </button>
@@ -272,6 +272,66 @@ const DEFAULT_LINKS: UserLink[] = [
     url: "https://example.com",
     slug: "portfolio",
   },
+  {
+    id: "3",
+    label: "Portfolio",
+    url: "https://example.com",
+    slug: "portfolio",
+  },
+  {
+    id: "3",
+    label: "Portfolio",
+    url: "https://example.com",
+    slug: "portfolio",
+  },
+  {
+    id: "3",
+    label: "Portfolio",
+    url: "https://example.com",
+    slug: "portfolio",
+  },
+  {
+    id: "3",
+    label: "Portfolio",
+    url: "https://example.com",
+    slug: "portfolio",
+  },
+  {
+    id: "3",
+    label: "Portfolio",
+    url: "https://example.com",
+    slug: "portfolio",
+  },
+  {
+    id: "3",
+    label: "Portfolio",
+    url: "https://example.com",
+    slug: "portfolio",
+  },
+  {
+    id: "3",
+    label: "Portfolio",
+    url: "https://example.com",
+    slug: "portfolio",
+  },
+  {
+    id: "3",
+    label: "Portfolio",
+    url: "https://example.com",
+    slug: "portfolio",
+  },
+  {
+    id: "3",
+    label: "Portfolio",
+    url: "https://example.com",
+    slug: "portfolio",
+  },
+  {
+    id: "3",
+    label: "Portfolio",
+    url: "https://example.com",
+    slug: "portfolio",
+  },
 ];
 // ─── Main Links Page ──────────────────────────────────────────────────────────
 export default function LinksPage() {
@@ -281,12 +341,12 @@ export default function LinksPage() {
   const [addOpen, setAddOpen] = useState(false);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   getMyLinksApi()
-  //     .then(setLinks)
-  //     .catch(() => setError("Failed to load links"))
-  //     .finally(() => setLoading(false));
-  // }, []);
+  useEffect(() => {
+    getMyLinksApi()
+      .then(setLinks)
+      .catch(() => setError("Failed to load links"))
+      .finally(() => setLoading(false));
+  }, []);
   useEffect(() => {
     getMyLinksApi()
       .then((data) => {
@@ -326,21 +386,22 @@ export default function LinksPage() {
         </div>
         <button
           onClick={() => setAddOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-violet-600 text-white text-sm font-semibold hover:bg-violet-700 transition shadow-lg shadow-violet-500/20"
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition shadow-lg shadow-green-500/20"
         >
           <span className="text-lg leading-none">+</span> Add Link
         </button>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6">
+      <div className="mx-auto px-4 sm:px-6 py-6">
         {/* Error */}
         {error && (
-          <div className="mb-6 p-4 rounded-2xl bg-red-950/30 border border-red-800/40 text-red-400 text-sm">
+          <div className="mb-6 p-4 rounded-sm bg-green-950/30 border border-green-800/40 text-green-400 text-sm">
             {error}
           </div>
         )}
 
         {/* Loading skeleton */}
+
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((i) => (
@@ -369,20 +430,32 @@ export default function LinksPage() {
           <>
             {/* Analytics hint banner — shown when user has links but no slugs */}
             {links.every((l) => !l.slug) && (
-              <div className="mb-5 p-4 rounded-2xl bg-violet-950/30 border border-violet-800/30 flex items-start gap-3">
-                <span className="text-violet-400 text-lg mt-0.5">💡</span>
-                <p className="text-sm text-violet-300">
+              <div className="mb-5 p-4 rounded-2xl bg-green-950/30 border border-green-800/30 flex items-start gap-3">
+                <span className="text-green-400 text-lg mt-0.5">💡</span>
+                <p className="text-sm text-green-300">
                   Set a <strong>slug</strong> on each link in DB to activate the
                   public{" "}
-                  <code className="text-violet-400 bg-violet-950/50 px-1 rounded">
+                  <code className="text-green-400 bg-green-950/50 px-1 rounded">
                     /r/:slug
                   </code>{" "}
-                  redirect and start tracking clicks.
+                  greenirect and start tracking clicks.
                 </p>
               </div>
             )}
 
-            {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div
+              className="
+				grid
+				grid-cols-1
+				sm:grid-cols-1
+				md:grid-cols-2
+				lg:grid-cols-2
+				xl:grid-cols-3
+				2xl:grid-cols-4
+				gap-4
+				"
+            >
+              {" "}
               {links.map((link) => (
                 <LinkCard
                   key={link.id}
@@ -391,7 +464,7 @@ export default function LinksPage() {
                   onViewAnalytics={handleAnalytics}
                 />
               ))}
-            </div> */}
+            </div>
           </>
         )}
       </div>
