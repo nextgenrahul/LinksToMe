@@ -40,7 +40,6 @@ export class AuthService {
 	}
 
 
-	// Signup Services 
 
 	public async signup(payload: SignupPayload, meta: { userAgent?: string; ip?: string }) {
 		const emailTaken = await this.repo.existsByEmail(payload.email);

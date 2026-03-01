@@ -76,14 +76,11 @@ class ModuleLoader {
       if (moduleObj?.routes) {
         const fullPath = `${apiPrefix}/${moduleName}`;
         const requiresGlobalAuth = this.config.authRequiredForModule[moduleName] ?? false;
-
         this.logger.log(`🚀 Routing: ${fullPath} --> ${moduleName}Module`);
-
         // Apply Global Auth Guard if configured for this module
         if (requiresGlobalAuth && authGuard) { 
           app.use(fullPath, authGuard);
         }
-
         // Attach the module's router
         // moduleObj.routes should be the Express Router instance we built in the previous step
         app.use(fullPath, moduleObj.routes);

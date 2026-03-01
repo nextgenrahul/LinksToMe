@@ -68,19 +68,18 @@ export class App {
      */
     public async bootstrap(): Promise<void> {
         try {
-            // 1. Connect to PostgreSQL (Raw SQL Pool)
             await dbService.init();
             console.log('✅ Database connected successfully');
 
-            // 2. Load Dynamic Modules from src/modules
+            // Load Dynamic Modules from src/modules
             await moduleLoader.loadModules();
 
-            // 3. Register Routes automatically
+            // Register Routes automatically
             await moduleLoader.registerRoutes(this.app);
             console.log('📦 All modules registered');
 
-            // 4. Top-level public redirect route: GET /r/:slug
-            //    Must be registered AFTER modules are loaded so the controller is available
+            // Top-level public redirect route: GET /r/:slug
+            //  Must be registered AFTER modules are loaded so the controller is available
             const linksModule = (moduleLoader as any)['modules']?.get('links');
             if (linksModule?.controller) {
                 const linksCtrl = linksModule.controller as LinksController;
@@ -88,7 +87,7 @@ export class App {
                 console.log('🔗 Redirect route registered: GET /r/:slug');
             }
 
-            // 4. Handle unknown routes (404)
+            // Handle unknown routes (404)
             this.app.use((req, res, next) => {
                 next(
                     new AppError(
@@ -98,7 +97,7 @@ export class App {
                 );
             });
 
-            // 5. Global Error Middleware 
+            // Global Error Middleware 
             this.app.use(globalErrorHandler);
 
         } catch (error) {

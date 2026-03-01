@@ -71,6 +71,7 @@ export class AuthMiddleware {
       req.token = token;
 
       next();
+      
     } catch (error: any) {
       if (error.name === "TokenExpiredError") {
         return next(new AppError("Session expired.", 401));

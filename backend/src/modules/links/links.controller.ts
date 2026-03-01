@@ -5,8 +5,6 @@ import { AuthRequest } from "backend/src/shared/middlewares/auth.middleware";
 export class LinksController {
     constructor(private readonly service: LinksService) { }
 
-    // ─── Public: Redirect ─────────────────────────────────────────────────────
-
     /**
      * GET /r/:slug
      * Public — no auth required.
@@ -32,7 +30,6 @@ export class LinksController {
         }
     };
 
-    // ─── Protected: Analytics ────────────────────────────────────────────────
 
     /**
      * GET /links/:id/analytics
