@@ -48,13 +48,19 @@ export class AuthRepository {
     return rows[0];
   }
 
-  public async exists(email: string) {
-    const query = `SELECT id
-    FROM users
-    WHERE (email = $1)
-      AND account_status = 'active'
-    LIMIT 1;`;
+  public async existsByEmail(email: string): Promise<boolean> {
+    const query = `
+      SELECT id FROM users WHERE email = $1 LIMIT 1;
+    `;
     const { rows } = await dbService.query(query, [email]);
+    return rows.length > 0;
+  }
+
+  public async existsByUsername(username: string): Promise<boolean> {
+    const query = `
+      SELECT id FROM users WHERE username = $1 LIMIT 1;
+    `;
+    const { rows } = await dbService.query(query, [username]);
     return rows.length > 0;
   }
 
@@ -84,7 +90,7 @@ export class AuthRepository {
     return (result.rowCount ?? 0) > 0;
   }
 
-  async findRefreshToken(tokenHash: string) {
+  async findRefreshToken(tokenHash: string): Promise<RefreshTokenSession | null> {
     const query = `
       SELECT
         rt.user_id,
@@ -99,21 +105,18 @@ export class AuthRepository {
       WHERE rt.token_hash = $1
       LIMIT 1;
     `;
-
     const { rows } = await dbService.query(query, [tokenHash]);
-    return rows[0] ?? null;
+    return (rows[0] as RefreshTokenSession) ?? null;
   }
 
-  async findUserById(id: string){
+
+  async findUserById(id: string): Promise<UserRow | null> {
     const query = `
       SELECT id, email, username, name, account_status
-      FROM users
-      WHERE id = $1
-      LIMIT 1;
+      FROM users WHERE id = $1 LIMIT 1;
     `;
-
     const { rows } = await dbService.query(query, [id]);
-    return rows[0] ?? null;
+    return (rows[0] as UserRow) ?? null;
   }
 
 }
