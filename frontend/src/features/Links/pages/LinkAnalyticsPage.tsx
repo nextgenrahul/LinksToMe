@@ -169,7 +169,6 @@ export default function LinkAnalyticsPage() {
 
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
 
-        {/* ── Stats Grid ──────────────────────────────────────────── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <StatCard
             label="Today"
