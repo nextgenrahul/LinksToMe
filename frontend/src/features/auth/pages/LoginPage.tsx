@@ -78,7 +78,6 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="h-screen bg-white flex flex-col overflow-hidden">
       <main className="flex flex-col flex-1 overflow-y-auto lg:overflow-hidden">
@@ -105,7 +104,6 @@ export default function LoginPage() {
               />
             </div>
           </aside>
-
           <section className="w-full lg:w-7/13  flex flex-col bg-white">
             <LinksToMe
               className="p-6 lg:hidden flex justify-center text-white bg-black"

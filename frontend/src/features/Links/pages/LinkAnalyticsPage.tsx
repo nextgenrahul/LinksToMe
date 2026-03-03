@@ -48,7 +48,6 @@ const StatCard: React.FC<StatCardProps> = ({ label, value, sub, accent = "bg-vio
   </div>
 );
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function LinkAnalyticsPage() {
   const { id } = useParams<{ id: string }>();
@@ -77,7 +76,6 @@ export default function LinkAnalyticsPage() {
     })();
   }, [id, navigate]);
 
-  // ── States ──────────────────────────────────────────────────────
 
   if (loading) {
     return (
