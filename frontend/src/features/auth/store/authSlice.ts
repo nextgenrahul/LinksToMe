@@ -29,7 +29,6 @@ export const bootstrapAuth = createAsyncThunk<
 
     const meRes = await apiClient.get<{ user: AuthUser }>("/auth/me");
 
-    console.log(meRes)
 
     return {
       user: meRes.data.user,

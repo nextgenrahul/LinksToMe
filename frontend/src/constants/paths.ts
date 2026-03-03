@@ -2,6 +2,8 @@ export const PATHS = {
   DASHBOARD: '/dashboard',
   SEARCH: '/search',
   NOTIFICATIONS: '/notifications',
+  VAULT: '/vault',
+  ACHIEVEMENT: '/achievement',
   MESSAGES: '/messages',
   PROFILE: '/profile',
   LINKS: '/links',

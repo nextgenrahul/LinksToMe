@@ -38,12 +38,24 @@ export const navigation: NavItem[] = [
   //   mainImg: sidebarIcons.exploreDark,
   //   hoverImg: sidebarIcons.exploreLight,
   // },
-  // {
-  //   name: "Notifications",
-  //   href: "/notifications",
-  //   mainImg: sidebarIcons.bellDark,
-  //   hoverImg: sidebarIcons.bellLight,
-  // },
+  {
+    name: "Notifications",
+    href: "/notifications",
+    mainImg: sidebarIcons.bellDark,
+    hoverImg: sidebarIcons.bellLight,
+  },
+  {
+    name: "Achievement",
+    href: "/achievement",
+    mainImg: sidebarIcons.achievementDark,
+    hoverImg: sidebarIcons.achievementLight,
+  },
+  {
+    name: "Vault",
+    href: "/vault",
+    mainImg: sidebarIcons.vaultDark,
+    hoverImg: sidebarIcons.vaultLight,
+  }, 
   // {
   //   name: "Messages",
   //   href: "/messages",

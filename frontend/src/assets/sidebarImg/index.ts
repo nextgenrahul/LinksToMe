@@ -19,8 +19,15 @@ import lightLinks from "./linkLight.svg";
 import openLinks from "./openLinks.svg";
 import lightDashboard from './dashboard-light.svg';
 import darkDashboard from './dashboard-dark.svg';
-
+import achievementDark from './achievement-dark.svg';
+import achievementLight from './achievement.svg';
+import vaultLight from './vault-light.svg';
+import vaultDark from './vault-dark.svg';
 export const sidebarIcons = {
+  vaultLight,
+  vaultDark,
+  achievementDark,
+  achievementLight,
   darkDashboard,
   lightDashboard,
   lightLinks,

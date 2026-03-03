@@ -27,7 +27,23 @@ export const router = createBrowserRouter([
           {
             path: PATHS.DASHBOARD,
             element: <div>Dashboard Page Content</div>,
+          },  
+          {
+            path: PATHS.ACHIEVEMENT,
+            element: <div>Achievement Page Content</div>,
           },
+          {
+            path: PATHS.VAULT,
+            element: <div>Vault Page Content</div>,
+          },
+            {
+            path: PATHS.NOTIFICATIONS,
+            element: <div>Notifications Page Content</div>,
+          },
+          // {
+          //   path: PATHS.,
+          //   element: <div>Notifications Page Content</div>,
+          // },
           ...searchRoutes,
           ...profileRoutes,
             ...linksRoutes,
