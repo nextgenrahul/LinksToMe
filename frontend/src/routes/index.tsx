@@ -7,6 +7,7 @@ import NotFound from "@/features/common/NotFound";
 import { searchRoutes } from "@/features/search";
 import { profileRoutes } from "@/features/profile";
 import { linksRoutes } from "@/features/Links";
+import { achievementRoutes } from "@/features/achievements";
 
 
 export const router = createBrowserRouter([
@@ -28,10 +29,7 @@ export const router = createBrowserRouter([
             path: PATHS.DASHBOARD,
             element: <div>Dashboard Page Content</div>,
           },  
-          {
-            path: PATHS.ACHIEVEMENT,
-            element: <div>Achievement Page Content</div>,
-          },
+          
           {
             path: PATHS.VAULT,
             element: <div>Vault Page Content</div>,
@@ -47,7 +45,7 @@ export const router = createBrowserRouter([
           ...searchRoutes,
           ...profileRoutes,
             ...linksRoutes,
-
+            ...achievementRoutes,
 
           
         ],
