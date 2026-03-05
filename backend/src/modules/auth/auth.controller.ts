@@ -8,9 +8,7 @@ export class AuthController {
   constructor(private readonly service: AuthService) { }
 
   private setRefreshCookie(res: Response, refreshToken: string) {
-    const cookieName =
-      process.env.REFRESH_TOKEN_COOKIE_NAME || "refreshToken";
-
+    const cookieName = process.env.REFRESH_TOKEN_COOKIE_NAME || "refreshToken";
     res.cookie(cookieName, refreshToken, refreshTokenCookieOptions());
   }
 
