@@ -1,6 +1,5 @@
 import { RequestHandler } from "express";
 
-
 export interface Route {
   method: 'get' | 'post' | 'put' | 'delete' | 'patch';
   path: string;
@@ -8,7 +7,6 @@ export interface Route {
   preHandler?: RequestHandler;
   handler: RequestHandler;
 }
-
 
 export type UpdateProfileData = {
   name?: string;

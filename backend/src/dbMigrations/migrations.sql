@@ -1,8 +1,8 @@
--- Enable case-insensitive text for emails (Essential for Auth)
 CREATE EXTENSION IF NOT EXISTS citext;
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
+-- User Table
 CREATE TABLE users (
-    -- Identity
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- Authentication
@@ -44,18 +44,10 @@ CREATE TABLE users (
 );
 
 
--- 8. Essential Indexes for Billionaire-Grade Speed
-CREATE INDEX idx_users_username ON users(username);
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_account_status ON users(account_status);
-
-
-
-
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+-- Refresh Tokens
 
 CREATE TABLE refresh_tokens (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- this function is linked to pgcrypto extension
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
     token_hash TEXT NOT NULL,
     user_agent TEXT,
@@ -69,21 +61,20 @@ CREATE TABLE refresh_tokens (
         ON DELETE CASCADE
 );
 
+
 CREATE INDEX idx_refresh_tokens_user_id
 ON refresh_tokens(user_id);
+
 CREATE UNIQUE INDEX idx_refresh_tokens_token_hash
 ON refresh_tokens(token_hash);
 
 
 
-
--- User Interest Table 
-
+-- User Interests
 CREATE TABLE user_interests (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
     interest VARCHAR(100) NOT NULL,
-
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT fk_user_interests_user
@@ -96,7 +87,7 @@ CREATE UNIQUE INDEX idx_user_interests_unique
 ON user_interests(user_id, interest);
 
 
--- User Links Table
+-- User Links
 CREATE TABLE user_links (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
@@ -113,7 +104,8 @@ CREATE TABLE user_links (
 
 CREATE INDEX idx_user_links_user_id ON user_links(user_id);
 
--- User Badges Table
+
+-- User Badges
 CREATE TABLE user_badges (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
@@ -126,4 +118,71 @@ CREATE TABLE user_badges (
         ON DELETE CASCADE
 );
 
-CREATE UNIQUE INDEX idx_user_badges_unique ON user_badges(user_id, badge_code);
+CREATE UNIQUE INDEX idx_user_badges_unique
+ON user_badges(user_id, badge_code);
+
+-- Add slug to links
+ALTER TABLE user_links
+ADD COLUMN IF NOT EXISTS slug VARCHAR(20) UNIQUE;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_user_links_slug
+ON user_links(slug);
+
+-- Raw Click Log
+CREATE TABLE IF NOT EXISTS link_clicks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    link_id UUID NOT NULL,
+    clicked_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    ip_hash TEXT,
+    user_agent TEXT,
+
+    CONSTRAINT fk_link_clicks_link
+        FOREIGN KEY (link_id)
+        REFERENCES user_links(id)
+        ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_link_clicks_link_id
+ON link_clicks(link_id);
+
+CREATE INDEX IF NOT EXISTS idx_link_clicks_clicked_at
+ON link_clicks(clicked_at);
+
+CREATE INDEX IF NOT EXISTS idx_link_clicks_dedup
+ON link_clicks(link_id, ip_hash, clicked_at);
+
+-- Daily Aggregation
+CREATE TABLE IF NOT EXISTS link_daily_stats (
+    link_id UUID NOT NULL,
+    date DATE NOT NULL,
+    clicks INTEGER NOT NULL DEFAULT 0,
+
+    PRIMARY KEY (link_id, date),
+
+    CONSTRAINT fk_link_daily_stats_link
+        FOREIGN KEY (link_id)
+        REFERENCES user_links(id)
+        ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_link_daily_stats_date
+ON link_daily_stats(date);
+
+
+-- Users Achievement
+
+CREATE TABLE IF NOT EXISTS achievements (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(120) NOT NULL,
+    description TEXT,
+    proof_url TEXT,
+    category VARCHAR(50),
+    visibility VARCHAR(10) DEFAULT 'public'
+        CHECK (visibility IN ('public', 'private')),
+    achieved_at DATE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_achievements_user_id ON achievements(user_id);
