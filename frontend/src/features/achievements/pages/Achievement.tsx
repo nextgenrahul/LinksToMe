@@ -5,7 +5,6 @@ const Achievement = () => {
   return (
     <div className="p-8 text-white">
 
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-semibold">Achievements</h1>
@@ -14,7 +13,7 @@ const Achievement = () => {
           </p>
         </div>
 
-        <button className="bg-white text-black px-5 py-2 rounded-xl font-medium hover:bg-zinc-200 transition">
+        <button className="bg-white text-black px-5 py-2 rounded-sm font-medium hover:bg-zinc-200 transition">
           + Add Achievement
         </button>
       </div>
@@ -24,7 +23,7 @@ const Achievement = () => {
         <input
           type="text"
           placeholder="Search achievements..."
-          className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 w-full focus:outline-none"
+          className="bg-zinc-900 border border-zinc-800 rounded-sm px-4 py-2 w-full focus:outline-none"
         />
 
         <select className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2">

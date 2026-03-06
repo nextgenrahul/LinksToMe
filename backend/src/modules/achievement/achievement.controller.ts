@@ -8,6 +8,7 @@ export class AchievementController {
         private readonly service: AchievementService
     ) { }
 
+    
     check = (req : Request, res : Response) => {
         return res.json({message : "Working Bro"});
     }
