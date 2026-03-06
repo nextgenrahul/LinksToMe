@@ -20,7 +20,7 @@ const AchievementCard: React.FC<Props> = ({
       className="
       bg-zinc-900
       border border-zinc-800
-      rounded-2xl
+      rounded-sm
       overflow-hidden
       shadow-lg
       transition-all duration-300
@@ -56,11 +56,11 @@ const AchievementCard: React.FC<Props> = ({
 
         {/* Actions */}
         <div className="flex gap-3 mt-6">
-          <button className="flex-1 bg-white text-black py-2 rounded-xl text-sm hover:bg-zinc-200">
+          <button className="flex-1 bg-white text-black py-2 rounded-sm text-sm hover:bg-zinc-200">
             View
           </button>
 
-          <button className="flex-1 border border-zinc-700 py-2 rounded-xl text-sm hover:bg-zinc-800">
+          <button className="flex-1 border border-zinc-700 py-2 rounded-sm text-sm hover:bg-zinc-800">
             Edit
           </button>
         </div>
