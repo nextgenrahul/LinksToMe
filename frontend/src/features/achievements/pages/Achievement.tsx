@@ -42,12 +42,19 @@ const Achievement = () => {
         </p>
 
         <button className="bg-white text-black px-6 py-2 rounded-sm hover:bg-zinc-200">
-          Create First Achievement
+          Create Achievement
         </button>
       </div>
 
       {/* Achievement Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="	grid
+				grid-cols-1
+				sm:grid-cols-1
+				md:grid-cols-2
+				lg:grid-cols-2
+				xl:grid-cols-3
+				2xl:grid-cols-4
+				gap-4">
 
         <AchievementCard
           title="Google Cloud Certification"
@@ -58,6 +65,30 @@ const Achievement = () => {
         />
 
         <AchievementCard
+          title="Hackathon Winner"
+          description="Won 1st place in university AI hackathon."
+          date="Aug 2024"
+          category="Award"
+          proofImage="https://via.placeholder.com/300"
+        />  <AchievementCard
+          title="Hackathon Winner"
+          description="Won 1st place in university AI hackathon."
+          date="Aug 2024"
+          category="Award"
+          proofImage="https://via.placeholder.com/300"
+        />  <AchievementCard
+          title="Hackathon Winner"
+          description="Won 1st place in university AI hackathon."
+          date="Aug 2024"
+          category="Award"
+          proofImage="https://via.placeholder.com/300"
+        />  <AchievementCard
+          title="Hackathon Winner"
+          description="Won 1st place in university AI hackathon."
+          date="Aug 2024"
+          category="Award"
+          proofImage="https://via.placeholder.com/300"
+        />  <AchievementCard
           title="Hackathon Winner"
           description="Won 1st place in university AI hackathon."
           date="Aug 2024"
