@@ -43,21 +43,21 @@ class Database {
 
       // Event Listeners for Pool Monitoring
       newPool.on("connect", () => {
-        if (this.showQueries) console.log("📡 DB: New Client Connected to Pool");
+        if (this.showQueries) console.log("DB: New Client Connected to Pool");
       });
 
       newPool.on("error", (err) => {
-        console.error("❌ DB: Unexpected Pool Error", err);
+        console.error("DB: Unexpected Pool Error", err);
       });
 
       // Verification: Await the first connection test
       await newPool.query("SELECT 1");
       
       this.pool = newPool;
-      console.log("✅ DB: PostgreSQL Pool Verified and Ready");
+      console.log("DB: PostgreSQL Pool Verified and Ready");
       return this.pool;
     } catch (error) {
-      console.error("❌ DB: Critical Initialization Failure");
+      console.error("DB: Critical Initialization Failure");
       throw error;
     }
   }
@@ -89,13 +89,13 @@ class Database {
       if (this.showQueries) {
         const duration = Date.now() - start;
         if (duration > 150) { // Highlight slow queries for optimization
-          console.warn(`⚠️ Slow query (${duration}ms): ${sql.substring(0, 100)}...`);
+          console.warn(`Slow query (${duration}ms): ${sql.substring(0, 100)}...`);
         }
       }
 
       return result;
     } catch (error: any) {
-      console.error("❌ DB: Query Execution Failed", {
+      console.error("DB: Query Execution Failed", {
         code: error.code,
         message: error.message,
         sql: sql.substring(0, 200),
@@ -110,7 +110,7 @@ class Database {
   public async close(): Promise<void> {
     if (this.pool) {
       await this.pool.end();
-      console.log("🔒 DB: Pool Terminated");
+      console.log("DB: Pool Terminated");
       this.pool = null;
     }
   }

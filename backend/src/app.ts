@@ -57,7 +57,7 @@ export class App {
         this.app.get('/', (req: Request, res: Response) => {
             res.status(200).json({
                 success: true,
-                message: '🚀 LinksToMe Backend Engine is Live'
+                message: 'LinksToMe Backend Engine is Live'
             });
         });
     }
@@ -69,14 +69,14 @@ export class App {
     public async bootstrap(): Promise<void> {
         try {
             await dbService.init();
-            console.log('✅ Database connected successfully');
+            console.log('Database connected successfully');
 
             // Load Dynamic Modules from src/modules
             await moduleLoader.loadModules();
 
             // Register Routes automatically
             await moduleLoader.registerRoutes(this.app);
-            console.log('📦 All modules registered');
+            console.log('All modules registered');
 
             // Top-level public redirect route: GET /r/:slug
             //  Must be registered AFTER modules are loaded so the controller is available
@@ -84,7 +84,7 @@ export class App {
             if (linksModule?.controller) {
                 const linksCtrl = linksModule.controller as LinksController;
                 this.app.get('/r/:slug', linksCtrl.redirect);
-                console.log('🔗 Redirect route registered: GET /r/:slug');
+                console.log('Redirect route registered: GET /r/:slug');
             }
 
             // Handle unknown routes (404)
@@ -101,7 +101,7 @@ export class App {
             this.app.use(globalErrorHandler);
 
         } catch (error) {
-            console.error('❌ Critical failure during bootstrap:', error);
+            console.error('Critical failure during bootstrap:', error);
             process.exit(1);
         }
     }
@@ -111,7 +111,7 @@ export class App {
      */
     public listen(): void {
         this.app.listen(this.port, () => {
-            console.log(`📡 [PRODUCTION] LinksToMe Engine running on port ${this.port}`);
+            console.log(`[PRODUCTION] LinksToMe Engine running on port ${this.port}`);
         });
     }
 }

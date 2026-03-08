@@ -19,7 +19,7 @@ export class AuthRepository {
       params.ip ?? null,
       params.expiresAt
     ];
-
+    
     await dbService.query(query, values);
   }
 

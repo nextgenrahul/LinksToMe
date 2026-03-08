@@ -45,9 +45,9 @@ class ModuleLoader {
             const modulePath = path.join(this.config.modulesPath, moduleName, "index.ts");
             const moduleImport = await import(`file://${modulePath}`);
             this.modules.set(moduleName, moduleImport.default);
-            this.logger.log(`📦 Module loaded: [${moduleName}]`);
+            this.logger.log(`Module loaded: [${moduleName}]`);
           } catch (err: any) {
-            this.logger.error(`❌ Error loading module ${moduleName}: ${err.message}`);
+            this.logger.error(`Error loading module ${moduleName}: ${err.message}`);
           }
         }
       }
@@ -76,7 +76,7 @@ class ModuleLoader {
       if (moduleObj?.routes) {
         const fullPath = `${apiPrefix}/${moduleName}`;
         const requiresGlobalAuth = this.config.authRequiredForModule[moduleName] ?? false;
-        this.logger.log(`🚀 Routing: ${fullPath} --> ${moduleName}Module`);
+        this.logger.log(`Routing: ${fullPath} --> ${moduleName}Module`);
         // Apply Global Auth Guard if configured for this module
         if (requiresGlobalAuth && authGuard) { 
           app.use(fullPath, authGuard);
