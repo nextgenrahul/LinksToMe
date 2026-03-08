@@ -1,10 +1,7 @@
 import "dotenv/config";
 import { Pool, PoolConfig, QueryResult, QueryResultRow } from "pg";
 
-/**
- * PostgreSQL Database Service
- * Optimized for Raw SQL mastery and high-scale connection pooling.
- */
+
 class Database {
   private pool: Pool | null = null;
   private readonly showQueries: boolean;
@@ -31,10 +28,6 @@ class Database {
     };
   }
 
-  /**
-   * Initialize PostgreSQL pool (Eager Initialization)
-   * This is called once during App.bootstrap()
-   */
   public async init(): Promise<Pool> {
     if (this.pool) return this.pool;
 
@@ -50,7 +43,6 @@ class Database {
         console.error("DB: Unexpected Pool Error", err);
       });
 
-      // Verification: Await the first connection test
       await newPool.query("SELECT 1");
       
       this.pool = newPool;
@@ -62,9 +54,7 @@ class Database {
     }
   }
 
-  /**
-   * Internal helper to ensure pool is ready
-   */
+
   private async getActivePool(): Promise<Pool> {
     if (!this.pool) {
       // If code reaches here, bootstrap() was likely skipped.
@@ -73,9 +63,7 @@ class Database {
     return this.pool;
   }
 
-  /**
-   * Execute parameterized query with performance tracking
-   */
+
   public async query<T extends QueryResultRow = QueryResultRow>(
     sql: string,
     params: any[] = []
@@ -88,7 +76,7 @@ class Database {
 
       if (this.showQueries) {
         const duration = Date.now() - start;
-        if (duration > 150) { // Highlight slow queries for optimization
+        if (duration > 150) { 
           console.warn(`Slow query (${duration}ms): ${sql.substring(0, 100)}...`);
         }
       }
@@ -104,9 +92,7 @@ class Database {
     }
   }
 
-  /**
-   * Graceful Shutdown
-   */
+
   public async close(): Promise<void> {
     if (this.pool) {
       await this.pool.end();

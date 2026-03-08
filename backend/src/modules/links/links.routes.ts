@@ -10,19 +10,16 @@ export function linksRoute(
     const router = Router();
 
     const routes: Route[] = [
-        // ─── Public ───────────────────────────────────────────────────────────
+    
         {
-            // Redirect route — no auth required
-            // GET /r/:slug  → resolves slug, records click, 302 redirects
+            
             method: "get",
             path: "/r/:slug",
             handler: controller.redirect,
         },
 
-        // ─── Protected ────────────────────────────────────────────────────────
         {
-            // Analytics for a specific link — auth required
-            // GET /links/:id/analytics
+           
             method: "get",
             path: "/:id/analytics",
             preHandler: authMiddleware.verify,

@@ -5,16 +5,11 @@ import { AuthRequest } from "backend/src/shared/middlewares/auth.middleware";
 export class LinksController {
     constructor(private readonly service: LinksService) { }
 
-    /**
-     * GET /r/:slug
-     * Public — no auth required.
-     * Extracts client IP, hands off to service, then 302-redirects.
-     */
+
     redirect = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { slug } = req.params as { slug: string };
 
-            // Extract real client IP (trust proxy headers if behind nginx/load-balancer)
             const forwardedFor = req.headers["x-forwarded-for"];
             const rawIp =
                 (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor)?.split(",")[0]?.trim() ??
@@ -31,10 +26,7 @@ export class LinksController {
     };
 
 
-    /**
-     * GET /links/:id/analytics
-     * Requires auth. Returns analytics for the requesting user's link.
-     */
+  
     getAnalytics = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { id: linkId } = req.params as { id: string };

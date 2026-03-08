@@ -41,9 +41,7 @@ export const bootstrapAuth = createAsyncThunk<
 
 
 
-/* =========================
-   Thunk: Bootstrap Session
-========================= */
+
 // export const bootstrapAuth = createAsyncThunk<
 //   { user: AuthUser; accessToken: string; },
 //   void,
@@ -59,9 +57,7 @@ export const bootstrapAuth = createAsyncThunk<
 //     }
 //   });
 
-/* =========================
-   Thunk: Logout
-========================= */
+
 export const logoutUser = createAsyncThunk(
   "auth/logout",
   async () => {
@@ -70,9 +66,7 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
-/* =========================
-   Slice
-========================= */
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -80,7 +74,6 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      // Bootstrap
       .addCase(bootstrapAuth.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -109,9 +102,7 @@ const authSlice = createSlice({
 
 export default authSlice.reducer;
 
-/* =========================
-   Selectors
-========================= */
+
 export const selectAuth = (state: RootState) => state.auth;
 export const selectUser = (state: RootState) => state.auth.user;
 export const selectIsAuthenticated = (state: RootState) => state.auth.isAuthenticated;

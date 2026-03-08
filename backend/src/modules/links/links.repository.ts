@@ -5,7 +5,6 @@ import { DailyStatRow, LinkRow, MovingAvgRow } from "./links.types";
 
 export class LinksRepository {
 
-    // ─── Redirect ──────────────────────────────────────────────────
 
     async findLinkBySlug(slug: string): Promise<LinkRow | null> {
         const result = await dbService.query<LinkRow>(
@@ -17,12 +16,7 @@ export class LinksRepository {
         return result.rows[0] ?? null;
     }
 
-    // ─── Spam Prevention ───────────────────────────────────────────
-
-    /**
-     * Returns true if the same ip_hash clicked this link
-     * within the last `windowSeconds` seconds.
-     */
+  
     async isRecentDuplicateClick(
         linkId: string,
         ipHash: string,
@@ -39,7 +33,6 @@ export class LinksRepository {
         return parseInt(result.rows[0]?.count ?? '0', 10) > 0;
     }
 
-    // ─── Recording a Click ─────────────────────────────────────────
 
     async recordClick(
         linkId: string,
@@ -53,10 +46,7 @@ export class LinksRepository {
         );
     }
 
-    /**
-     * Atomically increments today's click count.
-     * Creates the row if it doesn't exist yet.
-     */
+    
     async upsertDailyStat(linkId: string): Promise<void> {
         await dbService.query(
             `INSERT INTO link_daily_stats (link_id, date, clicks)
@@ -67,9 +57,7 @@ export class LinksRepository {
         );
     }
 
-    // ─── Analytics Reads ───────────────────────────────────────────
-
-    /** Sum of clicks per day for the last 7 days. */
+ 
     async getLast7DaysStats(linkId: string): Promise<DailyStatRow[]> {
         const result = await dbService.query<DailyStatRow>(
             `SELECT date::TEXT, clicks
@@ -82,10 +70,7 @@ export class LinksRepository {
         return result.rows;
     }
 
-    /**
-     * 7-day rolling average using a window function.
-     * Returns one row per day that has data.
-     */
+    
     async getMovingAverage(linkId: string): Promise<MovingAvgRow[]> {
         const result = await dbService.query<MovingAvgRow>(
             `SELECT
@@ -108,7 +93,6 @@ export class LinksRepository {
         return result.rows;
     }
 
-    /** Today's click count (for trending detection). */
     async getTodayClicks(linkId: string): Promise<number> {
         const result = await dbService.query<{ clicks: number }>(
             `SELECT COALESCE(clicks, 0) AS clicks
@@ -120,7 +104,6 @@ export class LinksRepository {
         return result.rows[0]?.clicks ?? 0;
     }
 
-    /** Top performing link for a user (last 7 days). */
     async getTopLinkForUser(userId: string): Promise<{ link_id: string; total_clicks: number } | null> {
         const result = await dbService.query<{ link_id: string; total_clicks: number }>(
             `SELECT lds.link_id, SUM(lds.clicks) AS total_clicks
@@ -136,7 +119,6 @@ export class LinksRepository {
         return result.rows[0] ?? null;
     }
 
-    /** Verify a link belongs to a given user (ownership check). */
     async findLinkByIdAndUser(linkId: string, userId: string): Promise<LinkRow | null> {
         const result = await dbService.query<LinkRow>(
             `SELECT id, user_id, label, url, slug, position, created_at

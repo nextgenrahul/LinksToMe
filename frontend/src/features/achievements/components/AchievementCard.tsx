@@ -28,7 +28,7 @@ const AchievementCard: React.FC<Props> = ({
       hover:scale-[1.02]
       "
     >
-      {/* Proof Image */}
+     
       {proofImage && (
         <div className="h-40 w-full overflow-hidden">
           <img
@@ -39,7 +39,6 @@ const AchievementCard: React.FC<Props> = ({
         </div>
       )}
 
-      {/* Content */}
       <div className="p-6">
         <h3 className="text-lg font-semibold">{title}</h3>
 

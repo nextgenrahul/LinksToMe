@@ -18,7 +18,6 @@ const Achievement = () => {
         </button>
       </div>
 
-      {/* Search + Filter */}
       <div className="flex gap-4 mb-8">
         <input
           type="text"
@@ -46,7 +45,6 @@ const Achievement = () => {
         </button>
       </div>
 
-      {/* Achievement Grid */}
       <div className="	grid
 				grid-cols-1
 				sm:grid-cols-1
