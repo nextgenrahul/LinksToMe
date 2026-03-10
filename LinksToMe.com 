@@ -54,14 +54,12 @@ You want **technical depth project**.
 Perfect.
 
 Here are things you can build inside LinksToMe that are **pure backend + system design heavy** — no third-party dependency.
-
 ---
 
 # 🚀 1️⃣ Smart Link Rotation Engine (Very Technical)
-
 Instead of showing same link always:
 
-### Idea:
+Idea:
 
 If a link has 3 variants, rotate them automatically.
 

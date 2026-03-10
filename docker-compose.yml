@@ -33,7 +33,7 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
 
-  # 3. Backend (Monorepo Optimized ✅)
+  # 3. Backend (Monorepo Optimized )
   backend:
     build:
       context: . # REQUIRED: Root context to see /shared
@@ -61,7 +61,7 @@ services:
       db:
         condition: service_healthy
 
-  # 4. Frontend (Monorepo Optimized ✅)
+  # 4. Frontend (Monorepo Optimized)
   frontend:
     build:
       context: . # REQUIRED: Root context to see /shared
