@@ -18,15 +18,12 @@ export class App {
     constructor(port: number | string) {
         this.app = express();
         this.port = port;
-        // Configuration Flow
         this.initializeMiddlewares();
         this.initializeHealthCheck();
     }
 
-    /**
-     * Initializes Global Middlewares
-     * Focus: Security, Performance, and Parsing
-     */
+    // Initializes Global Middlewares
+    
     private initializeMiddlewares(): void {
         this.app.use(cors({
             origin: "http://localhost:5173",
@@ -39,12 +36,10 @@ export class App {
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
         this.app.use(compression());
-
     }
 
-    /**
-     * Standard Health Monitoring
-     */
+    // Standard Health Monitoring
+    
     private initializeHealthCheck(): void {
         this.app.get('/health', (req: Request, res: Response) => {
             res.status(200).json({
@@ -62,24 +57,15 @@ export class App {
         });
     }
 
-    /** 
-     * Asynchronous Bootstrap Process
-     * Connects DB and loads dynamic modules before the server starts
-     */
+    // Asynchronous Bootstrap Process -> Connects DB and loads dynamic modules before the server starts
+    
     public async bootstrap(): Promise<void> {
         try {
             await dbService.init();
             console.log('Database connected successfully');
-
-            // Load Dynamic Modules from src/modules
             await moduleLoader.loadModules();
-
-            // Register Routes automatically
             await moduleLoader.registerRoutes(this.app);
             console.log('All modules registered');
-
-            // Top-level public redirect route: GET /r/:slug
-            //  Must be registered AFTER modules are loaded so the controller is available
             const linksModule = (moduleLoader as any)['modules']?.get('links');
             if (linksModule?.controller) {
                 const linksCtrl = linksModule.controller as LinksController;

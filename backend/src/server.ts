@@ -6,7 +6,6 @@ const server = new App(PORT);
 
 const start = async () => {
     await server.bootstrap();
-    
     server.listen();
 };
 
