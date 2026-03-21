@@ -41,7 +41,6 @@ class ModuleLoader {
         if (dirent.isDirectory()) {
           const moduleName = dirent.name;
           try {
-            // Standard: Every module must have an index.ts that exports its routes/controller/service
             const modulePath = path.join(this.config.modulesPath, moduleName, "index.ts");
             const moduleImport = await import(`file://${modulePath}`);
             this.modules.set(moduleName, moduleImport.default);
@@ -58,9 +57,7 @@ class ModuleLoader {
     }
   }
 
-  /**
-   * Attaches module routers to the main Express application
-   */
+ 
   async registerRoutes(app: Application) {
     const apiPrefix = `${this.config.apiBasePath}/${this.config.apiVersion}`;
 
