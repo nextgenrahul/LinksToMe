@@ -73,7 +73,6 @@ const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-
       .addCase(bootstrapAuth.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -90,7 +89,6 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload ?? null;
       })
-      // Logout
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.isAuthenticated = false;

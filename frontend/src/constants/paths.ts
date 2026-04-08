@@ -14,3 +14,4 @@ export const PATHS = {
   FORGOTPASSWORD: "/accounts/password/reset",
   BOOKMARKS: '/bookmarks',
 } as const;
+

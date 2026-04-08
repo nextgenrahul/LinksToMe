@@ -3,12 +3,11 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import moduleLoader from "./shared/loaders/moduleLoader";
-import dbService from "./config/database"; // Using your Raw SQL Pool service
+import dbService from "./config/database"; 
 import { globalErrorHandler } from './shared/middlewares/error.middleware';
 import { AppError } from './shared/utils/AppError';
 import cookieParser from 'cookie-parser';
 import type { LinksController } from './modules/links/links.controller';
-
 
 
 export class App {
@@ -57,7 +56,6 @@ export class App {
         });
     }
 
-    // Asynchronous Bootstrap Process -> Connects DB and loads dynamic modules before the server starts
     
     public async bootstrap(): Promise<void> {
         try {
@@ -73,7 +71,6 @@ export class App {
                 console.log('Redirect route registered: GET /r/:slug');
             }
 
-            // Handle unknown routes (404)
             this.app.use((req, res, next) => {
                 next(
                     new AppError(
