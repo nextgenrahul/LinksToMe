@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { getMyLinksApi, createLinkApi, deleteLinkApi } from "../api/links.api";
-import type { UserLink } from "../types";
+import type { AddLinkModalProps, LinkCardProp, UserLink } from "../types";
 import { PATHS } from "@/constants/paths";
+import { Trash2 } from "lucide-react";
 
 // ─── Platform icon guesser ────────────────────────────────────────────────────
 function getPlatformIcon(url: string): string {
@@ -30,113 +32,196 @@ function getPlatformIcon(url: string): string {
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 function Skeleton({ className }: { className?: string }) {
-	return (
-		<div
-		className={`rounded-xl bg-zinc-800 animate-pulse ${className ?? ""}`}
-		/>
-	);
+  return (
+    <div
+      className={`rounded-xl bg-zinc-800 animate-pulse ${className ?? ""}`}
+    />
+  );
 }
 
 // ─── Add Link Modal ───────────────────────────────────────────────────────────
-interface AddLinkModalProps {
-  onClose: () => void;
-  onAdded: (link: UserLink) => void;
-}
 
-function AddLinkModal({ onClose, onAdded }: AddLinkModalProps) {
+
+
+export function AddLinkModal({ onClose, onAdded }: AddLinkModalProps) {
   const [label, setLabel] = useState("");
   const [url, setUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState("");
+  const [imageMode, setImageMode] = useState<"auto" | "custom">("auto");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
 
   const handleAdd = async () => {
     if (!url.trim()) {
-      setErr("URL is requigreen");
+      setErr("Destination URL is required");
       return;
     }
     setSaving(true);
     setErr("");
+
     try {
-      const link = await createLinkApi({
-        label: label || undefined,
-        url: url.trim(),
-      });
-      onAdded(link);
+      // Form Data preparation to handle text streams alongside physical binary images
+      const formData = new FormData();
+      formData.append("title", label.trim() || "Untitled Link");
+      formData.append("url", url.trim());
+      formData.append("imageMode", imageMode);
+      
+      if (imageMode === "custom" && imageFile) {
+        formData.append("icon", imageFile);
+      }
+
+      // Replace with your active custom thunk call or direct Axios client connection
+      // const res = await apiClient.post("/links", formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      
+      // Simulating action behavior for demonstration
+      // onAdded(res.data.data);
+      
       onClose();
-    } catch {
-      setErr("Failed to create link. Make sure the URL is valid.");
+    } catch (error: any) {
+      setErr(error?.response?.data?.message || "Failed to preserve digital asset. Ensure URL validity.");
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-      <div className="w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-2xl p-6 space-y-5">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white">Add New Link</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md px-4 transition-all duration-300">
+      <div className="w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-lg p-6 shadow-2xl space-y-6">
+        
+        {/* Header section */}
+        <div className="flex items-center justify-between border-b border-zinc-900 pb-4">
+          <div>
+            <h2 className="text-md font-bold text-zinc-100 tracking-wide">Add Asset Node</h2>
+            <p className="text-xs text-zinc-500 mt-0.5">Publish a routing link to your micro-index.</p>
+          </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-zinc-800 text-zinc-400 transition"
+            className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-zinc-900 text-zinc-500 hover:text-zinc-200 transition"
           >
             ✕
           </button>
         </div>
 
+        {/* Form Body Inputs */}
         <div className="space-y-4">
-          <div>
-            <label className="block text-xs text-zinc-500 mb-1.5 uppercase tracking-wider">
-              Label (optional)
+          
+          {/* Component: Icon Detection Mode */}
+          <div className="space-y-2">
+            <label className="block text-[11px] font-semibold text-zinc-500 uppercase tracking-widest">
+              Icon Strategy
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setImageMode("auto")}
+                className={`py-2.5 px-4 rounded-md border text-xs font-medium transition-all ${
+                  imageMode === "auto"
+                    ? "bg-zinc-900 border-zinc-700 text-zinc-100 shadow-sm"
+                    : "bg-transparent border-zinc-900 text-zinc-500 hover:border-zinc-800 hover:text-zinc-400"
+                }`}
+              >
+                Auto-Fetch Favicon
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setImageMode("custom")}
+                className={`py-2.5 px-4 rounded-md border text-xs font-medium transition-all ${
+                  imageMode === "custom"
+                    ? "bg-zinc-900 border-zinc-700 text-zinc-100 shadow-sm"
+                    : "bg-transparent border-zinc-900 text-zinc-500 hover:border-zinc-800 hover:text-zinc-400"
+                }`}
+              >
+                Custom Asset upload
+              </button>
+            </div>
+          </div>
+
+          {/* Conditional Custom Upload Field */}
+          {imageMode === "custom" && (
+            <div 
+              onClick={() => fileInputRef.current?.click()}
+              className="group border border-dashed border-zinc-800 hover:border-zinc-700 bg-zinc-900/20 rounded-md p-4 text-center cursor-pointer transition-all"
+            >
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleFileChange} 
+                accept="image/*" 
+                className="hidden" 
+              />
+              <span className="text-xs text-zinc-400 group-hover:text-zinc-200 transition-colors block">
+                {imageFile ? `✓ Selected: ${imageFile.name}` : "Upload custom vector/image file"}
+              </span>
+              <span className="text-[10px] text-zinc-600 block mt-1">PNG, JPG up to 2MB</span>
+            </div>
+          )}
+
+          {/* Label input field */}
+          <div className="space-y-1.5">
+            <label className="block text-[11px] font-semibold text-zinc-500 uppercase tracking-widest">
+              Display Label (Optional)
             </label>
             <input
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              placeholder="e.g. GitHub, Portfolio"
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-green-500 transition"
+              placeholder="e.g., Enterprise Portfolio"
+              className="w-full bg-zinc-900/60 border border-zinc-800 rounded-md px-3.5 py-2 text-zinc-100 text-sm placeholder-zinc-600 focus:outline-none focus:border-zinc-700 focus:bg-zinc-900 transition duration-200"
             />
           </div>
-          <div>
-            <label className="block text-xs text-zinc-500 mb-1.5 uppercase tracking-wider">
-              URL *
+
+          {/* Target URL destination field */}
+          <div className="space-y-1.5">
+            <label className="block text-[11px] font-semibold text-zinc-500 uppercase tracking-widest">
+              Destination Link URL *
             </label>
             <input
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://github.com/yourname"
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-green-500 transition"
+              placeholder="https://github.com/identity"
+              className="w-full bg-zinc-900/60 border border-zinc-800 rounded-md px-3.5 py-2 text-zinc-100 text-sm placeholder-zinc-600 focus:outline-none focus:border-zinc-700 focus:bg-zinc-900 transition duration-200"
             />
           </div>
-          {err && <p className="text-green-400 text-xs">{err}</p>}
+
+          {/* Error warning string boundary */}
+          {err && (
+            <div className="bg-red-950/20 border border-red-900/40 rounded-md px-3 py-2">
+              <p className="text-red-400 text-xs font-medium">{err}</p>
+            </div>
+          )}
         </div>
 
-        <div className="flex gap-3 pt-1">
+        {/* Action Panel Buttons */}
+        <div className="flex gap-3 pt-2 border-t border-zinc-900">
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 rounded-full border border-zinc-700 text-zinc-400 text-sm hover:bg-zinc-800 transition"
+            className="flex-1 py-2 rounded-md border border-zinc-800 text-zinc-400 text-xs font-medium hover:bg-zinc-900 hover:text-zinc-200 transition"
           >
             Cancel
           </button>
           <button
             onClick={handleAdd}
             disabled={saving}
-            className="flex-1 py-2.5 rounded-full bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition disabled:opacity-50"
+            className="flex-1 py-2 rounded-md bg-zinc-100 text-zinc-950 text-xs font-bold hover:bg-zinc-200 transition disabled:opacity-40"
           >
-            {saving ? "Adding…" : "Add Link"}
+            {saving ? "Processing Engine…" : "Deploy Live Link"}
           </button>
         </div>
       </div>
     </div>
   );
 }
-
 // ─── Link Card ────────────────────────────────────────────────────────────────
-interface LinkCardProps {
-  link: UserLink;
-  onDelete: (id: string) => void;
-  onViewAnalytics: (id: string) => void;
-}
 
-function LinkCard({ link, onDelete, onViewAnalytics }: LinkCardProps) {
+function LinkCard({ link, onDelete, onViewAnalytics }: LinkCardProp) {
   const [deleting, setDeleting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -162,9 +247,9 @@ function LinkCard({ link, onDelete, onViewAnalytics }: LinkCardProps) {
   };
 
   return (
-    <div className="relative group rounded-sm bg-zinc-900 border border-zinc-800 hover:border-zinc-600 transition-all duration-300 overflow-hidden">
+    <div className="relative group rounded-sm bg-zinc-950 border border-zinc-800 hover:border-zinc-600 transition-all duration-300 overflow-hidden">
       {/* Ambient glow on hover */}
-      <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-green-600/10 blur-2xl opacity-0 group-hover:opacity-100 transition duration-500" />
+      <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-zinc-600/10 blur-2xl opacity-0 group-hover:opacity-100 transition duration-500" />
 
       {/* Platform icon bubble */}
       <div className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center">
@@ -186,7 +271,7 @@ function LinkCard({ link, onDelete, onViewAnalytics }: LinkCardProps) {
         <p className="text-zinc-500 text-xs mt-0.5 truncate">{hostname}</p>
 
         {link.slug && (
-          <span className="inline-block mt-2 text-xs bg-green-500/10 border border-green-500/20 text-green-400 px-2 py-0.5 rounded-sm">
+          <span className="inline-block mt-2 text-xs bg-zinc-500/10 border border-zinc-500/20 text-zinc-400 px-2 py-0.5 rounded-sm">
             /r/{link.slug}
           </span>
         )}
@@ -199,27 +284,27 @@ function LinkCard({ link, onDelete, onViewAnalytics }: LinkCardProps) {
             rel="noopener noreferrer"
             className="flex-1 text-center text-sm py-2 rounded-sm bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition"
           >
-            Visit ↗
+            Visit
           </a>
           <button
             onClick={() => onViewAnalytics(link.id)}
-            className="flex-1 text-center text-sm py-2 rounded-sm bg-green-600/20 hover:bg-green-600/30 border border-green-600/30 text-green-400 transition"
+            className="flex-1 text-center text-sm py-2 rounded-sm bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition"
           >
-            📊 Analytics
+            Analytics
           </button>
           {!showConfirm ? (
             <button
               onClick={() => setShowConfirm(true)}
-              className="w-9 h-9 flex items-center justify-center rounded-sm hover:bg-green-500/10 text-zinc-600 hover:text-green-400 transition text-lg"
+              className="w-9 h-9 flex items-center justify-center rounded-sm hover:bg-zinc-700 text-zinc-300 transition text-lg"
               title="Delete"
             >
-              🗑
+              <Trash2 size={18} />
             </button>
           ) : (
             <button
               onClick={handleDelete}
               disabled={deleting}
-              className="px-3 py-2 rounded-sm bg-green-600 text-white text-xs font-semibold hover:bg-green-700 transition disabled:opacity-50"
+              className="px-3 py-2 rounded-sm bg-zinc-600 text-white text-xs font-semibold hover:bg-zinc-700 transition disabled:opacity-50"
             >
               {deleting ? "…" : "Confirm"}
             </button>
@@ -245,7 +330,7 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
       </div>
       <button
         onClick={onAdd}
-        className="px-6 py-2.5 rounded-full bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition"
+        className="px-6 py-2.5 rounded-full bg-zinc-600 text-white text-sm font-semibold hover:bg-zinc-700 transition"
       >
         + Add your first link
       </button>
@@ -386,17 +471,35 @@ export default function LinksPage() {
         </div>
         <button
           onClick={() => setAddOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition shadow-lg shadow-green-500/20"
+          className="
+            flex items-center gap-2
+            px-5 py-3
+            rounded-sm
+            bg-zinc-800
+            text-white
+            text-sm
+            font-semibold
+            hover:bg-zinc-700
+            transition
+          "
         >
-          <span className="text-lg leading-none">+</span> Add Link
+          <span className="text-lg leading-none">+</span>
+          Add Link
         </button>
       </div>
 
       <div className="mx-auto px-4 sm:px-6 py-6">
         {/* Error */}
         {error && (
-          <div className="mb-6 p-4 rounded-sm bg-green-950/30 border border-green-800/40 text-green-400 text-sm">
-            {error}
+          <div className="mb-6 flex items-center justify-between rounded-sm border border-red-500/30 bg-red-500/10 px-4 py-3">
+            <p className="text-sm text-red-400">{error}</p>
+
+            <button
+              onClick={() => setError("")}
+              className="ml-4 flex h-7 w-7 items-center justify-center rounded-full text-red-400 hover:bg-red-500/20 hover:text-red-300 transition"
+            >
+              ✕
+            </button>
           </div>
         )}
 
@@ -430,15 +533,15 @@ export default function LinksPage() {
           <>
             {/* Analytics hint banner — shown when user has links but no slugs */}
             {links.every((l) => !l.slug) && (
-              <div className="mb-5 p-4 rounded-2xl bg-green-950/30 border border-green-800/30 flex items-start gap-3">
-                <span className="text-green-400 text-lg mt-0.5">💡</span>
-                <p className="text-sm text-green-300">
+              <div className="mb-5 p-4 rounded-2xl bg-zinc-950/30 border border-zinc-800/30 flex items-start gap-3">
+                <span className="text-zinc-400 text-lg mt-0.5">💡</span>
+                <p className="text-sm text-zinc-300">
                   Set a <strong>slug</strong> on each link in DB to activate the
                   public{" "}
-                  <code className="text-green-400 bg-green-950/50 px-1 rounded">
+                  <code className="text-zinc-400 bg-zinc-950/50 px-1 rounded">
                     /r/:slug
                   </code>{" "}
-                  greenirect and start tracking clicks.
+                  zincirect and start tracking clicks.
                 </p>
               </div>
             )}

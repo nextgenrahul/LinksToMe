@@ -24,9 +24,13 @@ export interface CreateLinkPayload {
   url: string;
 }
 
+export interface AddLinkModalProps {
+  onClose: () => void;
+  onAdded: (link: UserLink) => void;
+}
 
-// interface LinkCardProps {
-//   link: UserLink;
-//   onDelete: (id: string) => void;
-//   onViewAnalytics: (id: string) => void;
-// }
+export interface LinkCardProp {
+  link: UserLink;
+  onDelete: (id: string) => void;
+  onViewAnalytics: (id: string) => void;
+}
