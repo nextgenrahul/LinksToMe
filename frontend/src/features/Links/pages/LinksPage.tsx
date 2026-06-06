@@ -83,7 +83,7 @@ export function AddLinkModal({ onClose, onAdded }: AddLinkModalProps) {
       
       // Simulating action behavior for demonstration
       // onAdded(res.data.data);
-      
+       
       onClose();
     } catch (error: any) {
       setErr(error?.response?.data?.message || "Failed to preserve digital asset. Ensure URL validity.");
