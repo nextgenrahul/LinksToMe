@@ -23,15 +23,18 @@
 
 import { Outlet } from "react-router-dom";
 import SidebarLayout from "./sidebarLayout/SidebarLayout";
+import BottomNavbar from "./sidebarLayout/BottomNavbar";
 
 export default function MainLayout() {
   return (
     <>
       <div className="flex min-h-screen bg-black text-white ">
-        <div className="hidden sm:block w-20 lg:w-64 ml-30 h-screen shrink-0">
+        <div className="hidden min-[1042px]:block w-20 lg:w-64 ml-30 h-screen shrink-0">
           <SidebarLayout />
         </div>
-
+        <div className="min-[1042px]:hidden">
+          <BottomNavbar />
+        </div>
         <main className="flex-1 h-screen overflow-y-auto border-l border-zinc-800 no-scrollbar">
           <Outlet />
         </main>

@@ -54,12 +54,12 @@ export default function SidebarLayout() {
       </div>
 
       <nav className="flex-1 px-3 space-y-1 mb-6">
-        <button
+        {/* <button
           className="relative flex items-center gap-4 px-3 py-3 text-xl font-medium text-red-600 rounded-full transition-all hover:bg-zinc-900"
           onClick={() => logout()}
         >
           Logout
-        </button>
+        </button> */}
         {navigation.map((item) => {
           const active = isActive(item.href);
 
