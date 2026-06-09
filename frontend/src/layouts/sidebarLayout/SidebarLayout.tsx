@@ -32,7 +32,7 @@ export default function SidebarLayout() {
       await apiClient.post("/auth/logout");
     } catch {
       // ignore
-    } finally {
+    } finally { 
       logoutUser();
       window.location.replace("/login");
     }

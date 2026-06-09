@@ -27,7 +27,7 @@ import BottomNavbar from "./sidebarLayout/BottomNavbar";
 
 export default function MainLayout() {
   return (
-    <>
+    <> 
       <div className="flex min-h-screen bg-black text-white ">
         <div className="hidden min-[1042px]:block w-20 lg:w-64 ml-30 h-screen shrink-0">
           <SidebarLayout />
