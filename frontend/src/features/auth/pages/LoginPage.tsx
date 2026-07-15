@@ -190,9 +190,9 @@ export default function LoginPage() {
             </div>
           </section>
         </section>
-        <footer className="h-18 flex items-center justify-center text-center bg-black text-white lg:border-t lg:border-gray-500">
+        {/* <footer className="h-18 flex items-center justify-center text-center bg-black text-white lg:border-t lg:border-gray-500">
           Our Terms And Conditions
-        </footer>
+        </footer> */}
       </main>
     </div>
   );
