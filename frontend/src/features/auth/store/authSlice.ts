@@ -21,7 +21,7 @@ export const bootstrapAuth = createAsyncThunk<
   try {
     const refreshRes = await apiClient.post<{ accessToken: string }>(
       "/auth/refresh"
-    );
+    ); 
 
     const accessToken = refreshRes.data.accessToken;
 
@@ -42,20 +42,6 @@ export const bootstrapAuth = createAsyncThunk<
 
 
 
-// export const bootstrapAuth = createAsyncThunk<
-//   { user: AuthUser; accessToken: string; },
-//   void,
-//   { rejectValue: string }>("auth/bootstrap", async (_, { rejectWithValue }) => {
-//     try {
-//       const res = await apiClient.get("/auth/me", {
-//         withCredentials: true,
-//       });
-
-//       return res.data;
-//     } catch {
-//       return rejectWithValue("Unauthenticated");
-//     }
-//   });
 
 
 export const logoutUser = createAsyncThunk(
